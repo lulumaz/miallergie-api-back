@@ -25,6 +25,7 @@ import {
   Credentials,
   JWT_SECRET,
 } from '../auth/MyAuthAuthenticationStrategyProvider';
+const bcrypt = require('bcrypt');
 
 const {sign} = require('jsonwebtoken');
 const signAsync = promisify(sign);
@@ -57,7 +58,14 @@ export class UserController {
     })
     user: Omit<User, 'id'>,
   ): Promise<User> {
-    return this.userRepository.create(user);
+    //Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+    user.password = hashedPassword;
+    //removing hashed password from response
+    const createdUser: any = await this.userRepository.create(user);
+    createdUser.password = undefined;
+    return createdUser;
   }
 
   @get('/users/count', {
@@ -94,7 +102,15 @@ export class UserController {
     @param.query.object('filter', getFilterSchemaFor(User))
     filter?: Filter<User>,
   ): Promise<User[]> {
-    return this.userRepository.find(filter);
+    const users: User[] = await this.userRepository.find(filter);
+    //removing hashed password from response
+    const res: any[] = [];
+    for (const user of users) {
+      const resUser: any = user;
+      resUser.password = undefined;
+      res.push(resUser);
+    }
+    return res;
   }
 
   @patch('/users', {
@@ -137,7 +153,10 @@ export class UserController {
     @param.query.object('filter', getFilterSchemaFor(User))
     filter?: Filter<User>,
   ): Promise<User> {
-    return this.userRepository.findById(id, filter);
+    //removing hashed password from response
+    const createdUser: any = await this.userRepository.findById(id, filter);
+    createdUser.password = undefined;
+    return createdUser;
   }
 
   @patch('/users/{id}', {
@@ -158,6 +177,7 @@ export class UserController {
     })
     user: User,
   ): Promise<void> {
+    //removing hashed password from response
     await this.userRepository.updateById(id, user);
   }
 
@@ -195,7 +215,12 @@ export class UserController {
     });
     if (!user) throw new HttpErrors.Unauthorized('Invalid credentials');
 
-    const isPasswordMatched = user.password === credentials.password;
+    console.log({base: user.password, req: credentials.password});
+
+    const isPasswordMatched = await bcrypt.compare(
+      credentials.password,
+      user.password,
+    );
     if (!isPasswordMatched)
       throw new HttpErrors.Unauthorized('Invalid credentials');
 

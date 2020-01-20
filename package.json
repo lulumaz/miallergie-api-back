@@ -57,6 +57,8 @@
     "@loopback/rest": "^1.25.1",
     "@loopback/rest-explorer": "^1.4.7",
     "@loopback/service-proxy": "^1.3.14",
+    "@types/bcrypt": "^3.0.0",
+    "bcrypt": "^3.0.7",
     "jsonwebtoken": "^8.5.1",
     "loopback-connector-mongodb": "^4.2.0",
     "passport": "^0.4.1",
