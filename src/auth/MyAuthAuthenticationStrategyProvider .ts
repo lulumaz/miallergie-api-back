@@ -17,7 +17,7 @@ export const JWT_STRATEGY_NAME = 'jwt';
 export const JWT_SECRET = 'changeme';
 // the required interface to filter login payload
 export interface Credentials {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -54,7 +54,7 @@ export class MyAuthAuthenticationStrategyProvider
   }
 
   // verify JWT token and decryot the payload.
-  // Then search user from database with id equals to payload's username.
+  // Then search user from database with id equals to payload's email.
   // if user is found, then verify its roles
   async verifyToken(
     payload: Credentials,
@@ -65,13 +65,14 @@ export class MyAuthAuthenticationStrategyProvider
     ) => void,
   ) {
     try {
-      const {username} = payload;
-      const user = await this.userRepository.findById(username);
+      const {email} = payload;
+      const user = await this.userRepository.findById(email);
       if (!user) done(null, false);
 
-      await this.verifyRoles(username);
+      await this.verifyRoles(email);
 
-      done(null, {name: username, email: user.email, [securityId]: username});
+      //TODO: verif if name as email is ok
+      done(null, {name: email, email: user.email, [securityId]: email});
     } catch (err) {
       if (err.name === 'UnauthorizedError') done(null, false);
       done(err, false);
@@ -79,7 +80,7 @@ export class MyAuthAuthenticationStrategyProvider
   }
 
   // verify user's role based on the SecuredType
-  async verifyRoles(username: string) {
+  async verifyRoles(email: string) {
     const {type, roles} = this.metadata;
 
     if ([SecuredType.IS_AUTHENTICATED, SecuredType.PERMIT_ALL].includes(type))
@@ -87,15 +88,17 @@ export class MyAuthAuthenticationStrategyProvider
 
     if (type === SecuredType.HAS_ANY_ROLE) {
       if (!roles.length) return;
+      //TODO: correct
       const {count} = await this.userRoleRepository.count({
-        userId: username,
+        userId: email,
         roleId: {inq: roles},
       });
 
       if (count) return;
     } else if (type === SecuredType.HAS_ROLES && roles.length) {
+      //TODO: correct
       const userRoles = await this.userRoleRepository.find({
-        where: {userId: username},
+        where: {userId: email},
       });
       const roleIds = userRoles.map(ur => ur.roleId);
       let valid = true;
@@ -107,7 +110,6 @@ export class MyAuthAuthenticationStrategyProvider
 
       if (valid) return;
     }
-
     throw new HttpErrors.Unauthorized('Invalid authorization');
   }
 }

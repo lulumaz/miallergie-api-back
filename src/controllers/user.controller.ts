@@ -16,14 +16,24 @@ import {
   put,
   del,
   requestBody,
+  HttpErrors,
 } from '@loopback/rest';
 import {User} from '../models';
-import {UserRepository} from '../repositories';
+import {UserRepository, UserRoleRepository} from '../repositories';
+import {promisify} from 'util';
+import {
+  Credentials,
+  JWT_SECRET,
+} from '../auth/MyAuthAuthenticationStrategyProvider ';
+
+const {sign} = require('jsonwebtoken');
+const signAsync = promisify(sign);
 
 export class UserController {
   constructor(
-    @repository(UserRepository)
-    public userRepository : UserRepository,
+    @repository(UserRepository) private userRepository: UserRepository,
+    @repository(UserRoleRepository)
+    private userRoleRepository: UserRoleRepository,
   ) {}
 
   @post('/users', {
@@ -59,7 +69,8 @@ export class UserController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where<User>,
+    @param.query.object('where', getWhereSchemaFor(User))
+    where?: Where<User>,
   ): Promise<Count> {
     return this.userRepository.count(where);
   }
@@ -80,7 +91,8 @@ export class UserController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(User)) filter?: Filter<User>,
+    @param.query.object('filter', getFilterSchemaFor(User))
+    filter?: Filter<User>,
   ): Promise<User[]> {
     return this.userRepository.find(filter);
   }
@@ -102,7 +114,8 @@ export class UserController {
       },
     })
     user: User,
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where<User>,
+    @param.query.object('where', getWhereSchemaFor(User))
+    where?: Where<User>,
   ): Promise<Count> {
     return this.userRepository.updateAll(user, where);
   }
@@ -121,7 +134,8 @@ export class UserController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(User)) filter?: Filter<User>
+    @param.query.object('filter', getFilterSchemaFor(User))
+    filter?: Filter<User>,
   ): Promise<User> {
     return this.userRepository.findById(id, filter);
   }
@@ -170,5 +184,33 @@ export class UserController {
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.userRepository.deleteById(id);
+  }
+  //-------------------- custom --------------------
+  @post('/users/login')
+  async login(@requestBody() credentials: Credentials) {
+    if (!credentials.email || !credentials.password)
+      throw new HttpErrors.BadRequest('Missing email or Password');
+    const user = await this.userRepository.findOne({
+      where: {email: credentials.email},
+    });
+    if (!user) throw new HttpErrors.Unauthorized('Invalid credentials');
+
+    const isPasswordMatched = user.password === credentials.password;
+    if (!isPasswordMatched)
+      throw new HttpErrors.Unauthorized('Invalid credentials');
+
+    const tokenObject = {email: credentials.email};
+    const token = await signAsync(tokenObject, JWT_SECRET);
+    const roles = await this.userRoleRepository.find({
+      where: {userId: user.id},
+    });
+    const {id, email} = user;
+
+    return {
+      token,
+      id: id as string,
+      email,
+      roles: roles.map(r => r.roleId),
+    };
   }
 }
