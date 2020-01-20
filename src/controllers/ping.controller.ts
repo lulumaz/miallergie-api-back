@@ -1,5 +1,6 @@
 import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/context';
+import {SecuredType, secured} from '../auth/MyAuthMetadataProvider';
 
 /**
  * OpenAPI response for ping()
@@ -40,6 +41,7 @@ export class PingController {
       '200': PING_RESPONSE,
     },
   })
+  @secured(SecuredType.IS_AUTHENTICATED)
   ping(): object {
     // Reply with a greeting, the current time, the url, and request headers
     return {
