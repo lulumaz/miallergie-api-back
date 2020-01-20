@@ -24,7 +24,7 @@ import {promisify} from 'util';
 import {
   Credentials,
   JWT_SECRET,
-} from '../auth/MyAuthAuthenticationStrategyProvider ';
+} from '../auth/MyAuthAuthenticationStrategyProvider';
 
 const {sign} = require('jsonwebtoken');
 const signAsync = promisify(sign);

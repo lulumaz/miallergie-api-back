@@ -66,13 +66,13 @@ export class MyAuthAuthenticationStrategyProvider
   ) {
     try {
       const {email} = payload;
-      const user = await this.userRepository.findById(email);
+      const user = await this.userRepository.findOne({where: {email: email}});
       if (!user) done(null, false);
 
       await this.verifyRoles(email);
 
       //TODO: verif if name as email is ok
-      done(null, {name: email, email: user.email, [securityId]: email});
+      done(null, {name: email, email: user?.email, [securityId]: email});
     } catch (err) {
       if (err.name === 'UnauthorizedError') done(null, false);
       done(err, false);

@@ -15,7 +15,7 @@ import {
   MyAuthBindings,
   MyAuthActionProvider,
 } from './auth/MyAuthActionProvider';
-import {MyAuthAuthenticationStrategyProvider} from './auth/MyAuthAuthenticationStrategyProvider ';
+import {MyAuthAuthenticationStrategyProvider} from './auth/MyAuthAuthenticationStrategyProvider';
 
 export class MiallergieApiBackApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
