@@ -14,7 +14,7 @@ import {StrategyAdapter} from '@loopback/authentication-passport';
 //config
 export const JWT_STRATEGY_NAME = 'jwt';
 // the JWT_secret to encrypt and decrypt JWT token
-export const JWT_SECRET = 'changeme';
+export const JWT_SECRET = 'AZFDFQSODQSKDQSODAZEKAZEO';
 // the required interface to filter login payload
 export interface Credentials {
   email: string;
