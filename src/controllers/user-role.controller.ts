@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
   CountSchema,
@@ -23,10 +24,11 @@ import {UserRoleRepository} from '../repositories';
 export class UserRoleController {
   constructor(
     @repository(UserRoleRepository)
-    public userRoleRepository : UserRoleRepository,
+    public userRoleRepository: UserRoleRepository,
   ) {}
 
   @post('/user-roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'UserRole model instance',
@@ -51,6 +53,7 @@ export class UserRoleController {
   }
 
   @get('/user-roles/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'UserRole model count',
@@ -59,12 +62,14 @@ export class UserRoleController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(UserRole)) where?: Where<UserRole>,
+    @param.query.object('where', getWhereSchemaFor(UserRole))
+    where?: Where<UserRole>,
   ): Promise<Count> {
     return this.userRoleRepository.count(where);
   }
 
   @get('/user-roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of UserRole model instances',
@@ -80,12 +85,14 @@ export class UserRoleController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(UserRole)) filter?: Filter<UserRole>,
+    @param.query.object('filter', getFilterSchemaFor(UserRole))
+    filter?: Filter<UserRole>,
   ): Promise<UserRole[]> {
     return this.userRoleRepository.find(filter);
   }
 
   @patch('/user-roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'UserRole PATCH success count',
@@ -102,12 +109,14 @@ export class UserRoleController {
       },
     })
     userRole: UserRole,
-    @param.query.object('where', getWhereSchemaFor(UserRole)) where?: Where<UserRole>,
+    @param.query.object('where', getWhereSchemaFor(UserRole))
+    where?: Where<UserRole>,
   ): Promise<Count> {
     return this.userRoleRepository.updateAll(userRole, where);
   }
 
   @get('/user-roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'UserRole model instance',
@@ -121,12 +130,14 @@ export class UserRoleController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(UserRole)) filter?: Filter<UserRole>
+    @param.query.object('filter', getFilterSchemaFor(UserRole))
+    filter?: Filter<UserRole>,
   ): Promise<UserRole> {
     return this.userRoleRepository.findById(id, filter);
   }
 
   @patch('/user-roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'UserRole PATCH success',
@@ -148,6 +159,7 @@ export class UserRoleController {
   }
 
   @put('/user-roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'UserRole PUT success',
@@ -162,6 +174,7 @@ export class UserRoleController {
   }
 
   @del('/user-roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'UserRole DELETE success',

@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
   CountSchema,
@@ -38,6 +39,7 @@ export class UserController {
   ) {}
 
   @post('/users', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -63,12 +65,14 @@ export class UserController {
     const hashedPassword = await bcrypt.hash(user.password, salt);
     user.password = hashedPassword;
     //removing hashed password from response
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createdUser: any = await this.userRepository.create(user);
     createdUser.password = undefined;
     return createdUser;
   }
 
   @get('/users/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model count',
@@ -84,6 +88,7 @@ export class UserController {
   }
 
   @get('/users', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User model instances',
@@ -104,8 +109,10 @@ export class UserController {
   ): Promise<User[]> {
     const users: User[] = await this.userRepository.find(filter);
     //removing hashed password from response
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any[] = [];
     for (const user of users) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resUser: any = user;
       resUser.password = undefined;
       res.push(resUser);
@@ -114,6 +121,7 @@ export class UserController {
   }
 
   @patch('/users', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User PATCH success count',
@@ -137,6 +145,7 @@ export class UserController {
   }
 
   @get('/users/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -154,12 +163,14 @@ export class UserController {
     filter?: Filter<User>,
   ): Promise<User> {
     //removing hashed password from response
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createdUser: any = await this.userRepository.findById(id, filter);
     createdUser.password = undefined;
     return createdUser;
   }
 
   @patch('/users/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'User PATCH success',
@@ -182,6 +193,7 @@ export class UserController {
   }
 
   @put('/users/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'User PUT success',
@@ -196,6 +208,7 @@ export class UserController {
   }
 
   @del('/users/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'User DELETE success',
@@ -206,7 +219,14 @@ export class UserController {
     await this.userRepository.deleteById(id);
   }
   //-------------------- custom --------------------
-  @post('/users/login')
+  @post('/users/login', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'User LOGIN success',
+      },
+    },
+  })
   async login(@requestBody() credentials: Credentials) {
     if (!credentials.email || !credentials.password)
       throw new HttpErrors.BadRequest('Missing email or Password');

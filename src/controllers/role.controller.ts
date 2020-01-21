@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
   CountSchema,
@@ -23,10 +24,11 @@ import {RoleRepository} from '../repositories';
 export class RoleController {
   constructor(
     @repository(RoleRepository)
-    public roleRepository : RoleRepository,
+    public roleRepository: RoleRepository,
   ) {}
 
   @post('/roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Role model instance',
@@ -51,6 +53,7 @@ export class RoleController {
   }
 
   @get('/roles/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Role model count',
@@ -65,6 +68,7 @@ export class RoleController {
   }
 
   @get('/roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Role model instances',
@@ -80,12 +84,14 @@ export class RoleController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Role)) filter?: Filter<Role>,
+    @param.query.object('filter', getFilterSchemaFor(Role))
+    filter?: Filter<Role>,
   ): Promise<Role[]> {
     return this.roleRepository.find(filter);
   }
 
   @patch('/roles', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Role PATCH success count',
@@ -108,6 +114,7 @@ export class RoleController {
   }
 
   @get('/roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Role model instance',
@@ -121,12 +128,14 @@ export class RoleController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Role)) filter?: Filter<Role>
+    @param.query.object('filter', getFilterSchemaFor(Role))
+    filter?: Filter<Role>,
   ): Promise<Role> {
     return this.roleRepository.findById(id, filter);
   }
 
   @patch('/roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Role PATCH success',
@@ -148,6 +157,7 @@ export class RoleController {
   }
 
   @put('/roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Role PUT success',
@@ -162,6 +172,7 @@ export class RoleController {
   }
 
   @del('/roles/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Role DELETE success',

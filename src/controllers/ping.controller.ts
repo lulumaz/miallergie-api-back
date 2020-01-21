@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/context';
 import {SecuredType, secured} from '../auth/MyAuthMetadataProvider';
@@ -52,32 +53,67 @@ export class PingController {
 
   // test endpoints here
 
-  @get('/ping/is-authenticated')
+  @get('/ping/is-authenticated', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'ping is ok',
+      },
+    },
+  })
   @secured(SecuredType.IS_AUTHENTICATED)
   testIsAuthenticated() {
     return {message: 'isAuthenticated: OK'};
   }
 
-  @get('/ping/permit-all')
+  @get('/ping/permit-all', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'ping is ok',
+      },
+    },
+  })
   @secured(SecuredType.PERMIT_ALL)
   testPermitAll() {
     return {message: 'permitAll: OK'};
   }
 
-  @get('/ping/deny-all')
+  @get('/ping/deny-all', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'no one can use this',
+      },
+    },
+  })
   @secured(SecuredType.DENY_ALL)
   testDenyAll() {
     return {message: 'denyAll: OK'};
   }
 
-  @get('/ping/has-any-role')
-  @secured(SecuredType.HAS_ANY_ROLE, ['ADMIN', 'ADMIN2'])
+  @get('/ping/has-any-role', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'ping is ok if user has role',
+      },
+    },
+  })
+  @secured(SecuredType.HAS_ANY_ROLE, ['ADMIN'])
   testHasAnyRole() {
     return {message: 'hasAnyRole: OK'};
   }
 
-  @get('/ping/has-roles')
-  @secured(SecuredType.HAS_ROLES, ['ADMIN', 'ADMIN2'])
+  @get('/ping/has-roles', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'ping is ok if user is ADMIN',
+      },
+    },
+  })
+  @secured(SecuredType.HAS_ROLES, ['ADMIN'])
   testHasRoles() {
     return {message: 'hasRoles: OK'};
   }
