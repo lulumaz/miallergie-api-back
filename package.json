@@ -31,7 +31,8 @@
     "prestart": "npm run build",
     "start": "node -r source-map-support/register .",
     "start/watch": "nodemon -r source-map-support/register .",
-    "prepublishOnly": "npm run test"
+    "prepublishOnly": "npm run test",
+    "initBase": "node ./dist/init"
   },
   "repository": {
     "type": "git"

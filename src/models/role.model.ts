@@ -5,16 +5,14 @@ export class Role extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
   })
   id?: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
-  description: string;
-
+  description?: string;
 
   constructor(data?: Partial<Role>) {
     super(data);

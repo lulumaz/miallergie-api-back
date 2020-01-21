@@ -7,5 +7,6 @@
   "user": "",
   "password": "",
   "database": "miam-app",
-  "useNewUrlParser": true
+  "useNewUrlParser": true,
+  "debug": true
 }
