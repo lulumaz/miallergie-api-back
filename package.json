@@ -52,6 +52,7 @@
     "@loopback/boot": "^1.7.1",
     "@loopback/context": "^1.25.1",
     "@loopback/core": "^1.12.1",
+    "@loopback/extension-health": "^0.2.14",
     "@loopback/openapi-v3": "^1.11.0",
     "@loopback/repository": "^1.17.0",
     "@loopback/rest": "^1.25.1",

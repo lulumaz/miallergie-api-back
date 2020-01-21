@@ -17,6 +17,7 @@ import {
   MyAuthActionProvider,
 } from './auth/MyAuthActionProvider';
 import {MyAuthAuthenticationStrategyProvider} from './auth/MyAuthAuthenticationStrategyProvider';
+import {HealthComponent} from '@loopback/extension-health';
 
 //getting package data
 export interface PackageInfo {
@@ -63,6 +64,9 @@ export class MiallergieApiBackApplication extends BootMixin(
     this.bind(AuthenticationBindings.AUTH_ACTION).toProvider(
       MyAuthActionProvider,
     );
+
+    //health check
+    this.component(HealthComponent);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
