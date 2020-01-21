@@ -35,8 +35,23 @@ export class MySequence implements SequenceHandler {
       await this.authenticateRequest(request);
 
       const args = await this.parseParams(request, route);
-      const result = await this.invoke(route, args);
-      this.send(response, result);
+      try {
+        const result = await this.invoke(route, args);
+        this.send(response, result);
+      } catch (error) {
+        //catching error ddb with duplicate values
+        if (
+          error.name &&
+          error.name === 'MongoError' &&
+          error.code &&
+          error.code === 11000
+        ) {
+          response.status(500);
+          this.send(response, error);
+        } else {
+          this.reject(context, error);
+        }
+      }
     } catch (err) {
       this.reject(context, err);
     }

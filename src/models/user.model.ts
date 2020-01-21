@@ -12,12 +12,18 @@ export class User extends Entity {
   @property({
     type: 'string',
     required: true,
+    index: {
+      unique: true,
+    },
   })
   email: string;
 
   @property({
     type: 'string',
     required: true,
+    index: {
+      unique: true,
+    },
   })
   username: string;
 
