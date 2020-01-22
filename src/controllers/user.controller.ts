@@ -64,11 +64,7 @@ export class UserController {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);
     user.password = hashedPassword;
-    //removing hashed password from response
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const createdUser: any = await this.userRepository.create(user);
-    createdUser.password = undefined;
-    return createdUser;
+    return this.userRepository.create(user);
   }
 
   @get('/users/count', {
@@ -107,17 +103,7 @@ export class UserController {
     @param.query.object('filter', getFilterSchemaFor(User))
     filter?: Filter<User>,
   ): Promise<User[]> {
-    const users: User[] = await this.userRepository.find(filter);
-    //removing hashed password from response
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res: any[] = [];
-    for (const user of users) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const resUser: any = user;
-      resUser.password = undefined;
-      res.push(resUser);
-    }
-    return res;
+    return this.userRepository.find(filter);
   }
 
   @patch('/users', {
@@ -162,11 +148,7 @@ export class UserController {
     @param.query.object('filter', getFilterSchemaFor(User))
     filter?: Filter<User>,
   ): Promise<User> {
-    //removing hashed password from response
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const createdUser: any = await this.userRepository.findById(id, filter);
-    createdUser.password = undefined;
-    return createdUser;
+    return this.userRepository.findById(id, filter);
   }
 
   @patch('/users/{id}', {
@@ -188,7 +170,6 @@ export class UserController {
     })
     user: User,
   ): Promise<void> {
-    //removing hashed password from response
     await this.userRepository.updateById(id, user);
   }
 
