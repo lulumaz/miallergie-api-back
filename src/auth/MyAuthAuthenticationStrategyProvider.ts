@@ -18,6 +18,7 @@ export const JWT_SECRET = 'AZFDFQSODQSKDQSODAZEKAZEO';
 // the required interface to filter login payload
 export interface Credentials {
   email: string;
+  username: string;
   password: string;
 }
 
@@ -66,11 +67,11 @@ export class MyAuthAuthenticationStrategyProvider
     ) => void,
   ) {
     try {
-      const {email} = payload;
+      const {email, username} = payload;
       const user = await this.userRepository.findOne({where: {email: email}});
       if (!user) done(null, false);
 
-      await this.verifyRoles(email);
+      await this.verifyRoles(username, email);
 
       //TODO: verif if name as email is ok
       done(null, {name: email, email: user?.email, [securityId]: email});
@@ -81,7 +82,7 @@ export class MyAuthAuthenticationStrategyProvider
   }
 
   // verify user's role based on the SecuredType
-  async verifyRoles(email: string) {
+  async verifyRoles(username: string, email: string) {
     const {type, roles} = this.metadata;
 
     if ([SecuredType.IS_AUTHENTICATED, SecuredType.PERMIT_ALL].includes(type))
@@ -89,18 +90,34 @@ export class MyAuthAuthenticationStrategyProvider
 
     if (type === SecuredType.HAS_ANY_ROLE) {
       if (!roles.length) return;
-      //TODO: correct
-      const {count} = await this.userRoleRepository.count({
-        userId: email,
-        roleId: {inq: roles},
+      const user = await this.userRepository.findOne({
+        where: {
+          email: email,
+          username: username,
+        },
       });
+      const {count} = await this.userRoleRepository.count(
+        {
+          userId: user?.id,
+          roleId: {inq: roles},
+        },
+        {strictObjectIDCoercion: true},
+      );
 
       if (count) return;
     } else if (type === SecuredType.HAS_ROLES && roles.length) {
-      //TODO: correct
-      const userRoles = await this.userRoleRepository.find({
-        where: {userId: email},
+      const user = await this.userRepository.findOne({
+        where: {
+          email: email,
+          username: username,
+        },
       });
+      const userRoles = await this.userRoleRepository.find(
+        {
+          where: {userId: user?.id},
+        },
+        {strictObjectIDCoercion: true},
+      );
       const roleIds = userRoles.map(ur => ur.roleId);
       let valid = true;
       for (const role of roles)

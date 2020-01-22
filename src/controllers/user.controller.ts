@@ -1,3 +1,4 @@
+import {SecuredType} from './../auth/MyAuthMetadataProvider';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
@@ -26,6 +27,7 @@ import {
   Credentials,
   JWT_SECRET,
 } from '../auth/MyAuthAuthenticationStrategyProvider';
+import {secured} from '../auth/MyAuthMetadataProvider';
 const bcrypt = require('bcrypt');
 
 const {sign} = require('jsonwebtoken');
@@ -85,6 +87,7 @@ export class UserController {
     return prom;
   }
 
+  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/users/count', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -101,6 +104,7 @@ export class UserController {
     return this.userRepository.count(where);
   }
 
+  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/users', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -206,6 +210,7 @@ export class UserController {
     await this.userRepository.replaceById(id, user);
   }
 
+  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @del('/users/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
