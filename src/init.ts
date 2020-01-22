@@ -7,6 +7,7 @@ import {UserRepository} from './repositories/user.repository';
 import {MongoDsDataSource} from './datasources';
 import {Count} from '@loopback/repository';
 import {UserRole} from './models';
+const bcrypt = require('bcrypt');
 //permet de remplir la base avec les données nécéssaire au foncitonnement de l'api
 
 const exec = async function() {
@@ -46,10 +47,14 @@ const exec = async function() {
     }
   }
   //création d'un compte utilisateur ayant le role admin
+  //Hash the password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash('administrator', salt);
+  const password = hashedPassword;
   const unserAdmin: Partial<User> = {
     email: 'miallergie@gmail.com',
     username: 'admin',
-    password: 'administrator',
+    password: password,
   };
 
   try {
