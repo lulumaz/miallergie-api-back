@@ -64,7 +64,25 @@ export class UserController {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);
     user.password = hashedPassword;
-    return this.userRepository.create(user);
+    const prom: Promise<User> = this.userRepository.create(user);
+    prom
+      .then((savedUser: User) => {
+        this.userRoleRepository
+          .create({
+            roleId: 'Classic',
+            userId: savedUser.id,
+          })
+          .catch((err: any) => {
+            console.error(
+              "Erreur lors de l'ajout d'un nouvel utilisateur au role Classic",
+              err,
+            );
+          });
+      })
+      .catch((err: any) => {
+        console.error("Erreur lors de l'ajout d'un nouvel utilisateur", err);
+      });
+    return prom;
   }
 
   @get('/users/count', {
