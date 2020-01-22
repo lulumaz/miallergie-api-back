@@ -63,24 +63,26 @@ const exec = async function() {
     //adding role to user
     const nUserRole: Partial<UserRole> = {
       roleId: 'Admin',
-      userId: '5e2769667fdd9530d89030da',
+      userId: user.id,
     };
+
     const userRole:
       | (UserRole & UserRoleRelations)
-      | null = await userRoleRepository.findOne({
-      where: {
-        roleId: nUserRole.roleId,
-        userId: nUserRole.userId,
+      | null = await userRoleRepository.findOne(
+      {
+        where: {
+          roleId: nUserRole.roleId,
+          userId: user.id,
+        },
       },
-    });
-    console.log(userRole, {
-      roleId: nUserRole.roleId,
-      userId: nUserRole.userId,
-    });
+      {strictObjectIDCoercion: true},
+    );
     if (!userRole) await userRoleRepository.create(nUserRole); //if role is not link then link it
   } catch (error) {
     console.error('error role create ', error);
   }
+
+  process.exit(); //fin du script
 };
 
 try {
