@@ -5,7 +5,7 @@ import {
   ValueOrPromise,
 } from '@loopback/core';
 import {juggler} from '@loopback/repository';
-import config from './mongo-ds.datasource.config.json';
+const config = require('../config');
 
 @lifeCycleObserver('datasource')
 export class MongoDsDataSource extends juggler.DataSource
@@ -14,7 +14,7 @@ export class MongoDsDataSource extends juggler.DataSource
 
   constructor(
     @inject('datasources.config.mongoDS', {optional: true})
-    dsConfig: object = config,
+    dsConfig: object = config.mongo,
   ) {
     super(dsConfig);
   }

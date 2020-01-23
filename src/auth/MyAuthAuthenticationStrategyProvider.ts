@@ -10,11 +10,12 @@ import {UserProfile, securityId} from '@loopback/security';
 import {HttpErrors} from '@loopback/rest';
 import {Strategy /* jwtstrategy*/, ExtractJwt} from 'passport-jwt';
 import {StrategyAdapter} from '@loopback/authentication-passport';
+const config = require('../config');
 
 //config
 export const JWT_STRATEGY_NAME = 'jwt';
 // the JWT_secret to encrypt and decrypt JWT token
-export const JWT_SECRET = 'AZFDFQSODQSKDQSODAZEKAZEO';
+export const JWT_SECRET = config.auth.secretToken;
 // the required interface to filter login payload
 export interface Credentials {
   email: string;

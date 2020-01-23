@@ -63,6 +63,7 @@
     "bcrypt": "^3.0.7",
     "jsonwebtoken": "^8.5.1",
     "loopback-connector-mongodb": "^4.2.0",
+    "minimist": "^1.2.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
   },
