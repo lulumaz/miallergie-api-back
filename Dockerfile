@@ -1,5 +1,5 @@
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM node:10-slim
+FROM node:10.13-alpine
 
 # Set to a non-root built-in user `node`
 USER node
@@ -26,5 +26,5 @@ ENV HOST=0.0.0.0 PORT=3000
 
 EXPOSE ${PORT}
 #CMD [ "node", "." ]
-CMD [ "node",".","--mongoHost=172.16.18.82", "--mongoPort=27017", "--mongoDb=miam-app"]
+CMD [ "node",".","--mongoHost=mongo-miam.default.svc.cluster.local", "--mongoPort=27017", "--mongoDb=miam-app"]
 

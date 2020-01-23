@@ -1,0 +1,91 @@
+# mongo deplyoment
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: mongo-miam
+    app: miam
+  name: mongo-miam
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongo-miam
+    spec:
+      containers:
+        - image: arm64v8/mongo
+          name: mongo
+          ports:
+            - name: mongo
+              containerPort: 27017
+              hostPort: 27017
+          volumeMounts:
+            - name: mongo-miam-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongo-miam-storage
+          hostPath:
+            path: /k8s/storages/miam/
+            type: Directory
+---
+# mongo service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mongo-miam
+    app: miam
+  name: mongo-miam
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    name: mongo-miam
+---
+# nodejs deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: app-miam-api
+    app: miam
+  name: app-miam
+spec:
+  selector:
+    matchLabels:
+      app: app-miam-api
+  template:
+    metadata:
+      labels:
+        app: app-miam-api
+    spec:
+      containers:
+        - name: app-miam-api
+          imagePullPolicy: Never
+          image: miallergie_api_server:V0.0.1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+---
+#service
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    name: app-miam
+    app: miam
+  name: app-miam
+spec:
+  selector:
+    app: app-miam
+  type: NodePort
+  ports:
+    - name: http-port
+      port: 3000
+      targetPort: 8001
+      nodePort: 30081
