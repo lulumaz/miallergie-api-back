@@ -92,19 +92,6 @@ export class PingController {
     return {message: 'denyAll: OK'};
   }
 
-  @get('/ping/has-any-role', {
-    security: OPERATION_SECURITY_SPEC,
-    responses: {
-      '200': {
-        description: 'ping is ok if user has role',
-      },
-    },
-  })
-  @secured(SecuredType.HAS_ANY_ROLE, ['ADMIN'])
-  testHasAnyRole() {
-    return {message: 'hasAnyRole: OK'};
-  }
-
   @get('/ping/has-roles', {
     security: OPERATION_SECURITY_SPEC,
     responses: {

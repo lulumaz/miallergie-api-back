@@ -88,24 +88,7 @@ export class MyAuthAuthenticationStrategyProvider
     if ([SecuredType.IS_AUTHENTICATED, SecuredType.PERMIT_ALL].includes(type))
       return;
 
-    if (type === SecuredType.HAS_ANY_ROLE) {
-      if (!roles.length) return;
-      const user = await this.userRepository.findOne({
-        where: {
-          email: email,
-          username: username,
-        },
-      });
-      const {count} = await this.userRoleRepository.count(
-        {
-          userId: user?.id,
-          roleId: {inq: roles},
-        },
-        {strictObjectIDCoercion: true},
-      );
-
-      if (count) return;
-    } else if (type === SecuredType.HAS_ROLES && roles.length) {
+    if (type === SecuredType.HAS_ROLES && roles.length) {
       const user = await this.userRepository.findOne({
         where: {
           email: email,
