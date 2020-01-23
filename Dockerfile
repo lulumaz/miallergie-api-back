@@ -25,4 +25,6 @@ RUN npm run build
 ENV HOST=0.0.0.0 PORT=3000
 
 EXPOSE ${PORT}
-CMD [ "node", "." ]
+#CMD [ "node", "." ]
+CMD [ "node",".","--mongoHost=172.16.18.82", "--mongoPort=27017", "--mongoDb=miam-app"]
+
