@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: miam
+---
 # mongo deplyoment
 apiVersion: v1
 kind: ReplicationController
@@ -6,6 +11,7 @@ metadata:
     name: mongo-miam
     app: miam
   name: mongo-miam
+  namespace: miam
 spec:
   replicas: 1
   template:
@@ -19,7 +25,6 @@ spec:
           ports:
             - name: mongo
               containerPort: 27017
-              hostPort: 27017
           volumeMounts:
             - name: mongo-miam-storage
               mountPath: /data/db
@@ -37,6 +42,7 @@ metadata:
     name: mongo-miam
     app: miam
   name: mongo-miam
+  namespace: miam
 spec:
   ports:
     - port: 27017
@@ -51,7 +57,8 @@ metadata:
   labels:
     name: app-miam-api
     app: miam
-  name: app-miam
+  name: app-miam-api
+  namespace: miam
 spec:
   selector:
     matchLabels:
@@ -77,15 +84,18 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    name: app-miam
+    name: app-miam-api
     app: miam
-  name: app-miam
+  name: app-miam-api
+  namespace: miam
 spec:
   selector:
-    app: app-miam
+    app: app-miam-api
   type: NodePort
   ports:
     - name: http-port
-      port: 3000
-      targetPort: 8001
-      nodePort: 30081
+      port: 80
+      targetPort: 3000
+      nodePort: 30090
+---
+

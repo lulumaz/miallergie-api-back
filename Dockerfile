@@ -1,6 +1,8 @@
 # Check out https://hub.docker.com/_/node to select a new base image
 FROM node:10.13-alpine
 
+RUN apk update && apk add python g++ make && rm -rf /var/cache/apk/*
+
 # Set to a non-root built-in user `node`
 USER node
 
@@ -26,5 +28,5 @@ ENV HOST=0.0.0.0 PORT=3000
 
 EXPOSE ${PORT}
 #CMD [ "node", "." ]
-CMD [ "node",".","--mongoHost=mongo-miam.default.svc.cluster.local", "--mongoPort=27017", "--mongoDb=miam-app"]
+CMD [ "node",".","--mongoHost=mongo-miam.miam.svc.cluster.local", "--mongoPort=27017", "--mongoDb=miam-app"]
 
