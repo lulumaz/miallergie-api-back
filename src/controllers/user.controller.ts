@@ -19,6 +19,8 @@ import {
   del,
   requestBody,
   HttpErrors,
+  RestBindings,
+  Response,
 } from '@loopback/rest';
 import {User} from '../models';
 import {UserRepository, UserRoleRepository} from '../repositories';
@@ -28,6 +30,8 @@ import {
   JWT_SECRET,
 } from '../auth/MyAuthAuthenticationStrategyProvider';
 import {secured} from '../auth/MyAuthMetadataProvider';
+import {validateRegister} from '../utils/validator';
+import {inject} from '@loopback/core';
 const bcrypt = require('bcrypt');
 
 const {sign} = require('jsonwebtoken');
@@ -38,6 +42,7 @@ export class UserController {
     @repository(UserRepository) private userRepository: UserRepository,
     @repository(UserRoleRepository)
     private userRoleRepository: UserRoleRepository,
+    @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
   @post('/users', {
@@ -46,6 +51,10 @@ export class UserController {
       '200': {
         description: 'User model instance',
         content: {'application/json': {schema: getModelSchemaRef(User)}},
+      },
+      '530': {
+        description: 'Error when validating data',
+        content: {'application/json': {}},
       },
     },
   })
@@ -61,7 +70,14 @@ export class UserController {
       },
     })
     user: Omit<User, 'id'>,
-  ): Promise<User> {
+  ): Promise<User | {error: string}> {
+    //validate with Joi
+    const {error} = validateRegister(user);
+    if (error) {
+      this.response.status(530);
+      return {error: error.details[0].message};
+    }
+
     //Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);

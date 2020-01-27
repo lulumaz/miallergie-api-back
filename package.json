@@ -48,6 +48,7 @@
     "!*/__tests__"
   ],
   "dependencies": {
+    "@hapi/joi": "^17.1.0",
     "@loopback/authentication": "^3.3.0",
     "@loopback/authentication-passport": "^1.1.0",
     "@loopback/boot": "^1.7.1",
