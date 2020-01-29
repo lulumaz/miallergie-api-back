@@ -6,6 +6,7 @@ export function validateRegister(data: {
   username: string;
 }) {
   const schema = Joi.object({
+    id: Joi.optional(),
     username: Joi.string()
       .min(6)
       .max(255)
