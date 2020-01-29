@@ -32,10 +32,59 @@ import {
 import {secured} from '../auth/MyAuthMetadataProvider';
 import {validateRegister} from '../utils/validator';
 import {inject} from '@loopback/core';
+import {property, Entity, model} from '@loopback/repository';
 const bcrypt = require('bcrypt');
 
 const {sign} = require('jsonwebtoken');
 const signAsync = promisify(sign);
+@model({
+  settings: {
+    indexes: {
+      uniqueEmail: {
+        keys: {
+          email: 1,
+        },
+        options: {
+          unique: true,
+        },
+      },
+      uniqueUser: {
+        keys: {
+          username: 1,
+        },
+        options: {
+          unique: true,
+        },
+      },
+    },
+    hiddenProperties: ['password'],
+  },
+})
+class UserChangePassword extends Entity {
+  @property({
+    type: 'string',
+  })
+  email: string;
+
+  @property({
+    type: 'string',
+  })
+  username: string;
+
+  @property({
+    type: 'string',
+  })
+  oldPassword: string;
+
+  @property({
+    type: 'string',
+  })
+  newPassword: string;
+
+  constructor(data?: Partial<UserChangePassword>) {
+    super(data);
+  }
+}
 
 export class UserController {
   constructor(
@@ -217,13 +266,99 @@ export class UserController {
       '204': {
         description: 'User PUT success',
       },
+      '530': {
+        description: 'Error when validating data',
+        content: {'application/json': {}},
+      },
+      '531': {
+        description: 'User with the same username already exist',
+        content: {'application/json': {}},
+      },
+      '532': {
+        description: 'User with the same email already exist',
+        content: {'application/json': {}},
+      },
+      '533': {
+        description: 'The old password with different',
+        content: {'application/json': {}},
+      },
     },
   })
   async replaceById(
     @param.path.string('id') id: string,
-    @requestBody() user: User,
-  ): Promise<void> {
-    await this.userRepository.replaceById(id, user);
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(UserChangePassword, {
+            title: 'changeUser',
+          }),
+        },
+      },
+    })
+    user: Omit<UserChangePassword, 'id'>,
+  ): Promise<void | {error: string}> {
+    const newUser: User = await this.userRepository.findById(id); //getting actual user
+
+    if (user.username) {
+      if (
+        (await this.userRepository.count({username: user.username})).count === 0
+      ) {
+        newUser.username = user.username;
+
+        //validating new user
+        const {error} = validateRegister(newUser);
+        if (error) {
+          this.response.status(530);
+          return {error: error.details[0].message};
+        }
+
+        await this.userRepository.replaceById(newUser.id, newUser);
+      } else {
+        this.response.status(531);
+        return {error: 'Un utilisateur avec le même nom existe déjà.'};
+      }
+    }
+
+    if (user.email) {
+      if ((await this.userRepository.count({email: user.email})).count === 0) {
+        newUser.email = user.email;
+
+        //validating new user
+        const {error} = validateRegister(newUser);
+        if (error) {
+          this.response.status(530);
+          return {error: error.details[0].message};
+        }
+
+        await this.userRepository.replaceById(newUser.id, newUser);
+      } else {
+        this.response.status(532);
+        return {error: 'Un utilisateur avec la même adresse mail existe déjà.'};
+      }
+    }
+
+    if (user.newPassword && user.oldPassword) {
+      if (newUser.password === user.newPassword) {
+        console.log(await this.userRepository.count({email: user.email}));
+
+        //validating new user
+        newUser.password = user.newPassword;
+        const {error} = validateRegister(newUser);
+        if (error) {
+          this.response.status(530);
+          return {error: error.details[0].message};
+        }
+
+        //Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newUser.password, salt);
+        newUser.password = hashedPassword;
+        await this.userRepository.replaceById(newUser.id, newUser);
+      } else {
+        this.response.status(533);
+        return {error: "L'ancien mot de passe n'est pas le bon"};
+      }
+    }
   }
 
   @secured(SecuredType.HAS_ROLES, ['Admin'])
