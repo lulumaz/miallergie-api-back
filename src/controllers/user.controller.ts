@@ -404,11 +404,12 @@ export class UserController {
     const roles = await this.userRoleRepository.find({
       where: {userId: user.id},
     });
-    const {id, email} = user;
+    const {id, email, username} = user;
 
     return {
       token,
       id: id as string,
+      username,
       email,
       roles: roles.map(r => r.roleId),
     };
