@@ -85,6 +85,21 @@ class UserChangePassword extends Entity {
     super(data);
   }
 }
+@model({})
+class UserLogin extends Entity {
+  @property({
+    type: 'string',
+  })
+  email: string;
+  @property({
+    type: 'string',
+  })
+  password: string;
+
+  constructor(data?: Partial<UserLogin>) {
+    super(data);
+  }
+}
 
 export class UserController {
   constructor(
@@ -338,9 +353,11 @@ export class UserController {
     }
 
     if (user.newPassword && user.oldPassword) {
-      if (newUser.password === user.newPassword) {
-        console.log(await this.userRepository.count({email: user.email}));
-
+      const isPasswordMatched = await bcrypt.compare(
+        user.oldPassword,
+        newUser.password,
+      );
+      if (isPasswordMatched) {
         //validating new user
         newUser.password = user.newPassword;
         const {error} = validateRegister(newUser);
@@ -382,7 +399,18 @@ export class UserController {
       },
     },
   })
-  async login(@requestBody() credentials: Credentials) {
+  async login(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(UserLogin, {
+            title: 'user',
+          }),
+        },
+      },
+    })
+    credentials: Credentials,
+  ) {
     if (!credentials.email || !credentials.password)
       throw new HttpErrors.BadRequest('Missing email or Password');
     const user = await this.userRepository.findOne({
