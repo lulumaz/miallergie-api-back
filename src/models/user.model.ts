@@ -1,7 +1,4 @@
-import {Intolerance} from './intolerance.model';
-import {Diet} from './diet.model';
-import {Allergy} from './allergy.model';
-import {Entity, model, property, hasMany, hasOne} from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
 @model({
   settings: {
@@ -54,24 +51,21 @@ export class User extends Entity {
 
   @property({
     type: 'array',
-    itemType: Allergy,
+    itemType: 'string',
   })
-  @hasMany(() => Allergy)
-  allergies?: Allergy[];
+  ids_allergie?: string[];
 
   @property({
     type: 'array',
-    itemType: Intolerance,
+    itemType: 'string',
   })
-  @hasMany(() => Intolerance)
-  intolerances?: Intolerance[];
+  ids_intolerance?: string[];
 
   @property({
-    type: Diet,
+    type: 'string',
     required: false,
   })
-  @hasOne(() => Diet)
-  diet?: Diet;
+  id_diet?: string;
 
   constructor(data?: Partial<User>) {
     super(data);

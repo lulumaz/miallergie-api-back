@@ -1,7 +1,4 @@
-import {Intolerance} from './intolerance.model';
-import {Diet} from './diet.model';
-import {Allergy} from './allergy.model';
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Ingredient extends Entity {
@@ -24,24 +21,21 @@ export class Ingredient extends Entity {
 
   @property({
     type: 'array',
-    itemType: Allergy,
+    itemType: 'string',
   })
-  @hasMany(() => Allergy)
-  allergies?: Allergy[];
+  ids_allergie?: string[];
 
   @property({
     type: 'array',
-    itemType: Diet,
+    itemType: 'string',
   })
-  @hasMany(() => Diet)
-  diets?: Diet[];
+  ids_diet?: string[];
 
   @property({
     type: 'array',
-    itemType: Intolerance,
+    itemType: 'string',
   })
-  @hasMany(() => Intolerance)
-  intolerances?: Intolerance[];
+  ids_intolerance?: string[];
 
   @property({
     type: 'array',

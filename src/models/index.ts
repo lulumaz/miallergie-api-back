@@ -6,3 +6,4 @@ export * from './intolerance.model';
 export * from './diet.model';
 export * from './ingredient.model';
 export * from './recipe.model';
+export * from './recipe-ingredient.model';
