@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Intolerance} from './intolerance.model';
+import {Diet} from './diet.model';
+import {Allergy} from './allergy.model';
+import {Entity, model, property, hasMany, hasOne} from '@loopback/repository';
 
 @model()
 export class Recipe extends Entity {
@@ -15,24 +18,14 @@ export class Recipe extends Entity {
   })
   name: string;
 
-  @property({
-    type: 'array',
-    itemType: 'object',
-  })
-  allergies?: object[];
+  @hasMany(() => Allergy)
+  allergies?: Allergy[];
 
-  @property({
-    type: 'object',
-    required: true,
-  })
-  diet: object;
+  @hasMany(() => Intolerance)
+  intolerances?: Intolerance[];
 
-  @property({
-    type: 'array',
-    itemType: 'object',
-  })
-  intolerances?: object[];
-
+  @hasOne(() => Diet)
+  diet: Diet;
 
   constructor(data?: Partial<Recipe>) {
     super(data);
