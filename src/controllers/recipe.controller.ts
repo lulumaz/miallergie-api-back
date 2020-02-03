@@ -23,7 +23,7 @@ import {RecipeRepository} from '../repositories';
 export class RecipeController {
   constructor(
     @repository(RecipeRepository)
-    public recipeRepository : RecipeRepository,
+    public recipeRepository: RecipeRepository,
   ) {}
 
   @post('/recipes', {
@@ -47,6 +47,8 @@ export class RecipeController {
     })
     recipe: Omit<Recipe, 'id'>,
   ): Promise<Recipe> {
+    //TODO: verif if allergy,intol, diet, ingrediant exist
+
     return this.recipeRepository.create(recipe);
   }
 
@@ -59,7 +61,8 @@ export class RecipeController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(Recipe)) where?: Where<Recipe>,
+    @param.query.object('where', getWhereSchemaFor(Recipe))
+    where?: Where<Recipe>,
   ): Promise<Count> {
     return this.recipeRepository.count(where);
   }
@@ -80,8 +83,11 @@ export class RecipeController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Recipe)) filter?: Filter<Recipe>,
+    @param.query.object('filter', getFilterSchemaFor(Recipe))
+    filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
+    //TODO: add filter
+    //TODO: detail elements
     return this.recipeRepository.find(filter);
   }
 
@@ -102,7 +108,8 @@ export class RecipeController {
       },
     })
     recipe: Recipe,
-    @param.query.object('where', getWhereSchemaFor(Recipe)) where?: Where<Recipe>,
+    @param.query.object('where', getWhereSchemaFor(Recipe))
+    where?: Where<Recipe>,
   ): Promise<Count> {
     return this.recipeRepository.updateAll(recipe, where);
   }
@@ -121,8 +128,10 @@ export class RecipeController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Recipe)) filter?: Filter<Recipe>
+    @param.query.object('filter', getFilterSchemaFor(Recipe))
+    filter?: Filter<Recipe>,
   ): Promise<Recipe> {
+    //TODO: add details
     return this.recipeRepository.findById(id, filter);
   }
 
@@ -158,6 +167,7 @@ export class RecipeController {
     @param.path.string('id') id: string,
     @requestBody() recipe: Recipe,
   ): Promise<void> {
+    //TODO: control data
     await this.recipeRepository.replaceById(id, recipe);
   }
 
