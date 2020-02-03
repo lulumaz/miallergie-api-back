@@ -52,12 +52,24 @@ export class User extends Entity {
   })
   password: string;
 
+  @property({
+    type: 'array',
+    itemType: Allergy,
+  })
   @hasMany(() => Allergy)
   allergies?: Allergy[];
 
+  @property({
+    type: 'array',
+    itemType: Intolerance,
+  })
   @hasMany(() => Intolerance)
   intolerances?: Intolerance[];
 
+  @property({
+    type: Diet,
+    required: false,
+  })
   @hasOne(() => Diet)
   diet?: Diet;
 

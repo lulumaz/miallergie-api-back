@@ -22,12 +22,24 @@ export class Ingredient extends Entity {
   })
   name?: string;
 
+  @property({
+    type: 'array',
+    itemType: Allergy,
+  })
   @hasMany(() => Allergy)
   allergies?: Allergy[];
 
+  @property({
+    type: 'array',
+    itemType: Diet,
+  })
   @hasMany(() => Diet)
   diets?: Diet[];
 
+  @property({
+    type: 'array',
+    itemType: Intolerance,
+  })
   @hasMany(() => Intolerance)
   intolerances?: Intolerance[];
 
