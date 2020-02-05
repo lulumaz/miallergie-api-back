@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Intolerance} from './../intolerance.model';
+import {Food} from './../food.model';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
 
 @model()
 export class FoodIntolerance extends Entity {
@@ -9,6 +11,11 @@ export class FoodIntolerance extends Entity {
   })
   id?: string;
 
+  @belongsTo(() => Food)
+  foodId: string;
+
+  @belongsTo(() => Intolerance)
+  intoleranceId: string;
 
   constructor(data?: Partial<FoodIntolerance>) {
     super(data);
@@ -19,4 +26,5 @@ export interface FoodIntoleranceRelations {
   // describe navigational properties here
 }
 
-export type FoodIntoleranceWithRelations = FoodIntolerance & FoodIntoleranceRelations;
+export type FoodIntoleranceWithRelations = FoodIntolerance &
+  FoodIntoleranceRelations;
