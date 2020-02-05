@@ -1,8 +1,7 @@
-import {Diet} from './../diet.model';
 import {Intolerance} from './../intolerance.model';
 import {Allergy} from './../allergy.model';
 import {InputRecipe} from './../input/input-recipe.model';
-import {Model, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
 
 @model()
 export class OutputRecipe extends InputRecipe {
