@@ -23,7 +23,7 @@ import {IntoleranceRepository} from '../repositories';
 export class IntoleranceController {
   constructor(
     @repository(IntoleranceRepository)
-    public intoleranceRepository : IntoleranceRepository,
+    public intoleranceRepository: IntoleranceRepository,
   ) {}
 
   @post('/intolerances', {
@@ -40,7 +40,7 @@ export class IntoleranceController {
         'application/json': {
           schema: getModelSchemaRef(Intolerance, {
             title: 'NewIntolerance',
-            exclude: ['id'],
+            exclude: ['id', 'validate', 'createAt'],
           }),
         },
       },
@@ -59,7 +59,8 @@ export class IntoleranceController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(Intolerance)) where?: Where<Intolerance>,
+    @param.query.object('where', getWhereSchemaFor(Intolerance))
+    where?: Where<Intolerance>,
   ): Promise<Count> {
     return this.intoleranceRepository.count(where);
   }
@@ -80,7 +81,8 @@ export class IntoleranceController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Intolerance)) filter?: Filter<Intolerance>,
+    @param.query.object('filter', getFilterSchemaFor(Intolerance))
+    filter?: Filter<Intolerance>,
   ): Promise<Intolerance[]> {
     return this.intoleranceRepository.find(filter);
   }
@@ -102,7 +104,8 @@ export class IntoleranceController {
       },
     })
     intolerance: Intolerance,
-    @param.query.object('where', getWhereSchemaFor(Intolerance)) where?: Where<Intolerance>,
+    @param.query.object('where', getWhereSchemaFor(Intolerance))
+    where?: Where<Intolerance>,
   ): Promise<Count> {
     return this.intoleranceRepository.updateAll(intolerance, where);
   }
@@ -121,7 +124,8 @@ export class IntoleranceController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Intolerance)) filter?: Filter<Intolerance>
+    @param.query.object('filter', getFilterSchemaFor(Intolerance))
+    filter?: Filter<Intolerance>,
   ): Promise<Intolerance> {
     return this.intoleranceRepository.findById(id, filter);
   }

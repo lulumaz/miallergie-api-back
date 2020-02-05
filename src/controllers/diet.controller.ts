@@ -23,7 +23,7 @@ import {DietRepository} from '../repositories';
 export class DietController {
   constructor(
     @repository(DietRepository)
-    public dietRepository : DietRepository,
+    public dietRepository: DietRepository,
   ) {}
 
   @post('/diets', {
@@ -40,7 +40,7 @@ export class DietController {
         'application/json': {
           schema: getModelSchemaRef(Diet, {
             title: 'NewDiet',
-            exclude: ['id'],
+            exclude: ['id', 'validate', 'createAt'],
           }),
         },
       },
@@ -80,7 +80,8 @@ export class DietController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Diet)) filter?: Filter<Diet>,
+    @param.query.object('filter', getFilterSchemaFor(Diet))
+    filter?: Filter<Diet>,
   ): Promise<Diet[]> {
     return this.dietRepository.find(filter);
   }
@@ -121,7 +122,8 @@ export class DietController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Diet)) filter?: Filter<Diet>
+    @param.query.object('filter', getFilterSchemaFor(Diet))
+    filter?: Filter<Diet>,
   ): Promise<Diet> {
     return this.dietRepository.findById(id, filter);
   }

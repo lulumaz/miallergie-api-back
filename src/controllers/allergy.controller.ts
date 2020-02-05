@@ -23,14 +23,18 @@ import {AllergyRepository} from '../repositories';
 export class AllergyController {
   constructor(
     @repository(AllergyRepository)
-    public allergyRepository : AllergyRepository,
+    public allergyRepository: AllergyRepository,
   ) {}
 
   @post('/allergies', {
     responses: {
       '200': {
         description: 'Allergy model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Allergy)}},
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Allergy),
+          },
+        },
       },
     },
   })
@@ -40,7 +44,7 @@ export class AllergyController {
         'application/json': {
           schema: getModelSchemaRef(Allergy, {
             title: 'NewAllergy',
-            exclude: ['id'],
+            exclude: ['id', 'validate', 'createAt'],
           }),
         },
       },
@@ -59,7 +63,8 @@ export class AllergyController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(Allergy)) where?: Where<Allergy>,
+    @param.query.object('where', getWhereSchemaFor(Allergy))
+    where?: Where<Allergy>,
   ): Promise<Count> {
     return this.allergyRepository.count(where);
   }
@@ -80,7 +85,8 @@ export class AllergyController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Allergy)) filter?: Filter<Allergy>,
+    @param.query.object('filter', getFilterSchemaFor(Allergy))
+    filter?: Filter<Allergy>,
   ): Promise<Allergy[]> {
     return this.allergyRepository.find(filter);
   }
@@ -102,7 +108,8 @@ export class AllergyController {
       },
     })
     allergy: Allergy,
-    @param.query.object('where', getWhereSchemaFor(Allergy)) where?: Where<Allergy>,
+    @param.query.object('where', getWhereSchemaFor(Allergy))
+    where?: Where<Allergy>,
   ): Promise<Count> {
     return this.allergyRepository.updateAll(allergy, where);
   }
@@ -121,7 +128,8 @@ export class AllergyController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Allergy)) filter?: Filter<Allergy>
+    @param.query.object('filter', getFilterSchemaFor(Allergy))
+    filter?: Filter<Allergy>,
   ): Promise<Allergy> {
     return this.allergyRepository.findById(id, filter);
   }
