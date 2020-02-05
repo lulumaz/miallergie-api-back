@@ -4,6 +4,5 @@ export * from './user.controller';
 export * from './user-role.controller';
 export * from './allergy.controller';
 export * from './diet.controller';
-export * from './ingredient.controller';
 export * from './intolerance.controller';
 export * from './recipe.controller';

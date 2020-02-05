@@ -1,4 +1,4 @@
-import {UserRoleRelations} from './models/user-role.model';
+import {UserRoleRelations} from './models/user/user-role.model';
 import {User, UserRelations} from './models/user.model';
 import {UserRoleRepository} from './repositories/user-role.repository';
 import {Role} from './models/role.model';

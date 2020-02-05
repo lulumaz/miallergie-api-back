@@ -3,7 +3,6 @@ export * from './role.repository';
 export * from './user-role.repository';
 export * from './allergy.repository';
 export * from './diet.repository';
-export * from './ingredient.repository';
 export * from './intolerance.repository';
 export * from './recipe.repository';
 export * from './role.repository';
