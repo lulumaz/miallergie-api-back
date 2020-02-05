@@ -16,6 +16,27 @@ export class Recipe extends Entity {
   })
   name: string;
 
+  @property({
+    type: 'array',
+    itemType: 'string',
+  })
+  stages?: string[];
+
+  @property({
+    type: 'number',
+  })
+  difficulty?: number;
+
+  @property({
+    type: 'number',
+  })
+  duration?: number;
+
+  @property({
+    type: 'number',
+  })
+  numberOfPeople?: number;
+
   @belongsTo(() => Diet)
   dietId: string;
 

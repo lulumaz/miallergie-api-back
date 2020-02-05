@@ -17,6 +17,18 @@ export class RecipeFood extends Entity {
   @belongsTo(() => Food)
   foodId: string;
 
+  @property({
+    type: 'number',
+    required: true,
+  })
+  quantity: number;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  unit: string;
+
   constructor(data?: Partial<RecipeFood>) {
     super(data);
   }

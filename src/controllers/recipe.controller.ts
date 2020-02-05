@@ -1,3 +1,7 @@
+import {OutputRecipe} from './../models/output/output-recipe.model';
+import {InputRecipe} from './../models/input/input-recipe.model';
+import {DietRepository} from './../repositories/diet.repository';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -16,6 +20,8 @@ import {
   put,
   del,
   requestBody,
+  RestBindings,
+  Response,
 } from '@loopback/rest';
 import {Recipe} from '../models';
 import {RecipeRepository} from '../repositories';
@@ -24,13 +30,26 @@ export class RecipeController {
   constructor(
     @repository(RecipeRepository)
     public recipeRepository: RecipeRepository,
+    @repository(DietRepository)
+    public dietRepository: DietRepository,
+    @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
   @post('/recipes', {
     responses: {
       '200': {
         description: 'Recipe model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Recipe)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(OutputRecipe)},
+        },
+      },
+      '531': {
+        description: "Properties 'dietId' must be defined",
+        content: {'application/json': {error: 'string'}},
+      },
+      '532': {
+        description: "Properties 'dietId' must be defined",
+        content: {'application/json': {error: 'string'}},
       },
     },
   })
@@ -38,7 +57,7 @@ export class RecipeController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Recipe, {
+          schema: getModelSchemaRef(InputRecipe, {
             title: 'NewRecipe',
             exclude: ['id'],
           }),
@@ -46,8 +65,18 @@ export class RecipeController {
       },
     })
     recipe: Omit<Recipe, 'id'>,
-  ): Promise<Recipe> {
+  ): Promise<Recipe | {error: string}> {
     //TODO: verif if allergy,intol, diet, ingrediant exist
+    //check for diet
+    if (recipe.dietId === undefined) {
+      this.response.status(531);
+      return {error: "Properties 'dietId' must be defined"};
+    }
+    const diet = await this.dietRepository.findById(recipe.dietId);
+    if (!diet) {
+      this.response.status(532);
+      return {error: 'dietId:' + recipe.dietId + ' does not exist in ddb'};
+    }
 
     return this.recipeRepository.create(recipe);
   }
