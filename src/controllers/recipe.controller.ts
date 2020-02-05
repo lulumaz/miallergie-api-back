@@ -1,3 +1,6 @@
+import {RecipeFoodRepository} from './../repositories/recipe-food.repository';
+import {FoodRepository} from './../repositories/food.repository';
+import {RecipeFood} from '../models/recipe/recipe-food.model';
 import {OutputRecipe} from './../models/output/output-recipe.model';
 import {InputRecipe} from './../models/input/input-recipe.model';
 import {DietRepository} from './../repositories/diet.repository';
@@ -32,6 +35,10 @@ export class RecipeController {
     public recipeRepository: RecipeRepository,
     @repository(DietRepository)
     public dietRepository: DietRepository,
+    @repository(FoodRepository)
+    public foodRepository: FoodRepository,
+    @repository(RecipeFoodRepository)
+    public recipeFoodRepository: RecipeFoodRepository,
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
@@ -48,8 +55,8 @@ export class RecipeController {
         content: {'application/json': {error: 'string'}},
       },
       '532': {
-        description: "Properties 'dietId' must be defined",
-        content: {'application/json': {error: 'string'}},
+        description: 'error while saving ingrediants',
+        content: {'application/json': {error: {}}},
       },
     },
   })
@@ -59,26 +66,63 @@ export class RecipeController {
         'application/json': {
           schema: getModelSchemaRef(InputRecipe, {
             title: 'NewRecipe',
-            exclude: ['id'],
+            exclude: ['id'], //TODO: remove ingrediant id
           }),
         },
       },
     })
-    recipe: Omit<Recipe, 'id'>,
-  ): Promise<Recipe | {error: string}> {
+    recipe: Omit<InputRecipe, 'id'>,
+  ): Promise<OutputRecipe | {error: any}> {
     //TODO: verif if allergy,intol, diet, ingrediant exist
     //check for diet
     if (recipe.dietId === undefined) {
       this.response.status(531);
       return {error: "Properties 'dietId' must be defined"};
     }
-    const diet = await this.dietRepository.findById(recipe.dietId);
-    if (!diet) {
-      this.response.status(532);
-      return {error: 'dietId:' + recipe.dietId + ' does not exist in ddb'};
+    const diet = await this.dietRepository.findById(recipe.dietId); //if diet is missing it's throwing an error
+
+    //check if every food exist in ddb
+    for (const ingrediant of recipe.ingrediants) {
+      //if one food don't exist then it's throwing an error
+      const food = await this.foodRepository.findById(ingrediant.foodId);
+      //TODO: get allergie and intolerance
     }
 
-    return this.recipeRepository.create(recipe);
+    //all test are done we can save the recipe
+    const savedRecipe: Recipe = await this.recipeRepository.create({
+      dietId: recipe.dietId,
+      difficulty: recipe.difficulty,
+      duration: recipe.duration,
+      name: recipe.name,
+      numberOfPeople: recipe.numberOfPeople,
+      stages: recipe.stages,
+    });
+    const completeRecipe: OutputRecipe = new OutputRecipe(savedRecipe);
+
+    const promArray: Promise<RecipeFood>[] = [];
+    for (const ingrediant of recipe.ingrediants) {
+      ingrediant.recipeId = savedRecipe.id ? savedRecipe.id : '';
+      promArray.push(this.recipeFoodRepository.create(ingrediant));
+    }
+
+    let savedIngrediants: RecipeFood[] = [];
+    try {
+      savedIngrediants = await Promise.all(promArray);
+    } catch (error) {
+      console.error(error);
+      this.response.status(532);
+      return {error};
+    }
+
+    //adding complete ingrediants
+    completeRecipe.ingrediants = savedIngrediants;
+    //TODO: adding allergies
+
+    //TODO: adding intolerance
+
+    //TODO: verif diet
+
+    return completeRecipe;
   }
 
   @get('/recipes/count', {
