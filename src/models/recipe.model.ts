@@ -1,8 +1,14 @@
 import {Diet} from './diet.model';
-import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
-import {RecipeFood} from './recipe-food.model';
+import {
+  Entity,
+  model,
+  property,
+  belongsTo,
+  hasMany,
+} from '@loopback/repository';
 import {Allergy} from './allergy.model';
 import {Intolerance} from './intolerance.model';
+import {Ingrediant} from './ingrediant.model';
 
 @model()
 export class Recipe extends Entity {
@@ -43,14 +49,14 @@ export class Recipe extends Entity {
   @belongsTo(() => Diet)
   dietId: string;
 
-  @hasMany(() => RecipeFood)
-  ingrediants: RecipeFood[];
-
   @hasMany(() => Allergy)
   allergies: Allergy[];
 
   @hasMany(() => Intolerance)
   intolerances: Intolerance[];
+
+  @hasMany(() => Ingrediant)
+  ingrediants: Ingrediant[];
 
   constructor(data?: Partial<Recipe>) {
     super(data);

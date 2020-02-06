@@ -1,14 +1,13 @@
-import {RecipeFood} from '../recipe-food.model';
 import {Recipe} from './../recipe.model';
 import {model, property} from '@loopback/repository';
 
 @model()
 export class InputRecipe extends Recipe {
-  @property({
+  /*@property({
     type: 'array',
     itemType: RecipeFood,
   })
-  ingrediants: RecipeFood[];
+  ingrediants: RecipeFood[];*/
 
   constructor(data?: Partial<InputRecipe>) {
     super(data);

@@ -1,9 +1,8 @@
-import {Food} from './food.model';
-import {Recipe} from './recipe.model';
 import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Food} from './food.model';
 
 @model()
-export class RecipeFood extends Entity {
+export class Ingrediant extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -31,13 +30,13 @@ export class RecipeFood extends Entity {
   @belongsTo(() => Food)
   foodId: string;
 
-  constructor(data?: Partial<RecipeFood>) {
+  constructor(data?: Partial<Ingrediant>) {
     super(data);
   }
 }
 
-export interface RecipeFoodRelations {
+export interface IngrediantRelations {
   // describe navigational properties here
 }
 
-export type RecipeFoodWithRelations = RecipeFood & RecipeFoodRelations;
+export type IngrediantWithRelations = Ingrediant & IngrediantRelations;

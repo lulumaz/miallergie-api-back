@@ -8,3 +8,4 @@ export * from './recipe.model';
 export * from './food.model';
 export * from './input/input-recipe.model';
 export * from './output/output-recipe.model';
+export * from './ingrediant.model';

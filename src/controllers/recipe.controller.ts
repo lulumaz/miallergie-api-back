@@ -1,6 +1,6 @@
-import {RecipeFoodRepository} from './../repositories/recipe-food.repository';
+import {IngrediantRepository} from './../repositories/ingrediant.repository';
+import {Ingrediant} from './../models/ingrediant.model';
 import {FoodRepository} from './../repositories/food.repository';
-import {RecipeFood} from '../models/recipe-food.model';
 import {OutputRecipe} from './../models/output/output-recipe.model';
 import {InputRecipe} from './../models/input/input-recipe.model';
 import {DietRepository} from './../repositories/diet.repository';
@@ -37,8 +37,8 @@ export class RecipeController {
     public dietRepository: DietRepository,
     @repository(FoodRepository)
     public foodRepository: FoodRepository,
-    @repository(RecipeFoodRepository)
-    public recipeFoodRepository: RecipeFoodRepository,
+    @repository(IngrediantRepository)
+    public ingrediantRepository: IngrediantRepository,
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
@@ -99,13 +99,13 @@ export class RecipeController {
     });
     const completeRecipe: OutputRecipe = new OutputRecipe(savedRecipe);
 
-    const promArray: Promise<RecipeFood>[] = [];
+    const promArray: Promise<Ingrediant>[] = [];
     for (const ingrediant of recipe.ingrediants) {
       ingrediant.recipeId = savedRecipe.id ? savedRecipe.id : '';
-      promArray.push(this.recipeFoodRepository.create(ingrediant));
+      promArray.push(this.ingrediantRepository.create(ingrediant));
     }
 
-    let savedIngrediants: RecipeFood[] = [];
+    let savedIngrediants: Ingrediant[] = [];
     try {
       savedIngrediants = await Promise.all(promArray);
     } catch (error) {
