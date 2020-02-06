@@ -32,3 +32,8 @@ export * from './ingrediant.repository';
 export * from './food.repository';
 export * from './ingrediant.repository';
 export * from './recipe.repository';
+export * from './food-allergy.repository';
+export * from './food-diet.repository';
+export * from './food-intolerance.repository';
+export * from './recipe-allergy.repository';
+export * from './recipe-intolerance.repository';
