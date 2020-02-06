@@ -13,6 +13,11 @@ export class RecipeAllergy extends Entity {
   @belongsTo(() => Allergy)
   allergyId: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<RecipeAllergy>) {
     super(data);
   }

@@ -25,6 +25,11 @@ export class Ingrediant extends Entity {
   @belongsTo(() => Food)
   foodId: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<Ingrediant>) {
     super(data);
   }

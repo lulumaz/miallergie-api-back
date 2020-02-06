@@ -13,6 +13,11 @@ export class RecipeIntolerance extends Entity {
   @belongsTo(() => Intolerance)
   intoleranceId: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<RecipeIntolerance>) {
     super(data);
   }

@@ -9,6 +9,8 @@ import {
 import {Allergy} from './allergy.model';
 import {Intolerance} from './intolerance.model';
 import {Ingrediant} from './ingrediant.model';
+import {RecipeAllergy} from './recipe-allergy.model';
+import {RecipeIntolerance} from './recipe-intolerance.model';
 
 @model()
 export class Recipe extends Entity {
@@ -48,6 +50,15 @@ export class Recipe extends Entity {
 
   @belongsTo(() => Diet)
   dietId: string;
+
+  @hasMany(() => Ingrediant)
+  ingrediants: Ingrediant[];
+
+  @hasMany(() => RecipeAllergy)
+  recipeAllergies: RecipeAllergy[];
+
+  @hasMany(() => RecipeIntolerance)
+  recipeIntolerances: RecipeIntolerance[];
 
   constructor(data?: Partial<Recipe>) {
     super(data);
