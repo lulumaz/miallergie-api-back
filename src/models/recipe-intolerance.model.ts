@@ -1,5 +1,5 @@
-import {Intolerance} from './../intolerance.model';
-import {Recipe} from './../recipe.model';
+import {Intolerance} from './intolerance.model';
+import {Recipe} from './recipe.model';
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 
 @model()

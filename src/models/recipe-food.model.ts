@@ -1,5 +1,5 @@
-import {Food} from '../food.model';
-import {Recipe} from '../recipe.model';
+import {Food} from './food.model';
+import {Recipe} from './recipe.model';
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 
 @model()

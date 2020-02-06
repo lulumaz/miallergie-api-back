@@ -1,4 +1,4 @@
-import {RecipeFood} from '../recipe/recipe-food.model';
+import {RecipeFood} from '../recipe-food.model';
 import {Recipe} from './../recipe.model';
 import {model, property} from '@loopback/repository';
 

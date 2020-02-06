@@ -1,6 +1,6 @@
 import {RecipeFoodRepository} from './../repositories/recipe-food.repository';
 import {FoodRepository} from './../repositories/food.repository';
-import {RecipeFood} from '../models/recipe/recipe-food.model';
+import {RecipeFood} from '../models/recipe-food.model';
 import {OutputRecipe} from './../models/output/output-recipe.model';
 import {InputRecipe} from './../models/input/input-recipe.model';
 import {DietRepository} from './../repositories/diet.repository';
