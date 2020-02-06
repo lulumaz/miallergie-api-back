@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Allergy} from './allergy.model';
+import {Diet} from './diet.model';
+import {Intolerance} from './intolerance.model';
 
 @model()
 export class Food extends Entity {
@@ -24,6 +27,15 @@ export class Food extends Entity {
     itemType: 'object',
   })
   classes?: object[];
+
+  @hasMany(() => Allergy)
+  allergies: Allergy[];
+
+  @hasMany(() => Diet)
+  diets: Diet[];
+
+  @hasMany(() => Intolerance)
+  intolerances: Intolerance[];
 
   constructor(data?: Partial<Food>) {
     super(data);

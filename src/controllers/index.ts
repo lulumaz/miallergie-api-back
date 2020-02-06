@@ -11,3 +11,6 @@ export * from './recipe-diet.controller';
 export * from './recipe-recipe-food.controller';
 export * from './recipe-allergy.controller';
 export * from './recipe-intolerance.controller';
+export * from './food-allergy.controller';
+export * from './food-diet.controller';
+export * from './food-intolerance.controller';
