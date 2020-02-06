@@ -47,7 +47,11 @@ export class RecipeController {
       '200': {
         description: 'Recipe model instance',
         content: {
-          'application/json': {schema: getModelSchemaRef(OutputRecipe)},
+          'application/json': {
+            schema: getModelSchemaRef(Recipe, {
+              includeRelations: true,
+            }),
+          },
         },
       },
       '531': {
@@ -64,65 +68,15 @@ export class RecipeController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(InputRecipe, {
+          schema: getModelSchemaRef(Recipe, {
             title: 'NewRecipe',
-            exclude: ['id'], //TODO: remove ingrediant id
           }),
         },
       },
     })
-    recipe: Omit<InputRecipe, 'id'>,
-  ): Promise<OutputRecipe | {error: any}> {
-    //TODO: verif if allergy,intol, diet, ingrediant exist
-    //check for diet
-    if (recipe.dietId === undefined) {
-      this.response.status(531);
-      return {error: "Properties 'dietId' must be defined"};
-    }
-    const diet = await this.dietRepository.findById(recipe.dietId); //if diet is missing it's throwing an error
-
-    //check if every food exist in ddb
-    for (const ingrediant of recipe.ingrediants) {
-      //if one food don't exist then it's throwing an error
-      const food = await this.foodRepository.findById(ingrediant.foodId);
-      //TODO: get allergie and intolerance
-    }
-
-    //all test are done we can save the recipe
-    const savedRecipe: Recipe = await this.recipeRepository.create({
-      dietId: recipe.dietId,
-      difficulty: recipe.difficulty,
-      duration: recipe.duration,
-      name: recipe.name,
-      numberOfPeople: recipe.numberOfPeople,
-      stages: recipe.stages,
-    });
-    const completeRecipe: OutputRecipe = new OutputRecipe(savedRecipe);
-
-    const promArray: Promise<Ingrediant>[] = [];
-    for (const ingrediant of recipe.ingrediants) {
-      ingrediant.recipeId = savedRecipe.id ? savedRecipe.id : '';
-      promArray.push(this.ingrediantRepository.create(ingrediant));
-    }
-
-    let savedIngrediants: Ingrediant[] = [];
-    try {
-      savedIngrediants = await Promise.all(promArray);
-    } catch (error) {
-      console.error(error);
-      this.response.status(532);
-      return {error};
-    }
-
-    //adding complete ingrediants
-    completeRecipe.ingrediants = savedIngrediants;
-    //TODO: adding allergies
-
-    //TODO: adding intolerance
-
-    //TODO: verif diet
-
-    return completeRecipe;
+    recipe: Omit<Recipe, 'id'>,
+  ): Promise<Recipe | {error: any}> {
+    return this.recipeRepository.create(recipe);
   }
 
   @get('/recipes/count', {
