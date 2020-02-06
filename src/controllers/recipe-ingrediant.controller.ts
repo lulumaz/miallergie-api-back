@@ -1,3 +1,4 @@
+import {FoodRepository} from './../repositories/food.repository';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,14 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Recipe,
-  Ingrediant,
-} from '../models';
+import {Recipe, Ingrediant} from '../models';
 import {RecipeRepository} from '../repositories';
 
 export class RecipeIngrediantController {
   constructor(
     @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
-  ) { }
+    @repository(FoodRepository) protected foodRepository: FoodRepository,
+  ) {}
 
   @get('/recipes/{id}/ingrediants', {
     responses: {
@@ -60,13 +59,14 @@ export class RecipeIngrediantController {
         'application/json': {
           schema: getModelSchemaRef(Ingrediant, {
             title: 'NewIngrediantInRecipe',
-            exclude: ['id'],
-            optional: ['recipeId']
+            exclude: ['id', 'recipeId'],
           }),
         },
       },
-    }) ingrediant: Omit<Ingrediant, 'id'>,
+    })
+    ingrediant: Omit<Ingrediant, 'id'>,
   ): Promise<Ingrediant> {
+    await this.foodRepository.findById(ingrediant.foodId);
     return this.recipeRepository.ingrediants(id).create(ingrediant);
   }
 
@@ -88,7 +88,8 @@ export class RecipeIngrediantController {
       },
     })
     ingrediant: Partial<Ingrediant>,
-    @param.query.object('where', getWhereSchemaFor(Ingrediant)) where?: Where<Ingrediant>,
+    @param.query.object('where', getWhereSchemaFor(Ingrediant))
+    where?: Where<Ingrediant>,
   ): Promise<Count> {
     return this.recipeRepository.ingrediants(id).patch(ingrediant, where);
   }
@@ -103,7 +104,8 @@ export class RecipeIngrediantController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Ingrediant)) where?: Where<Ingrediant>,
+    @param.query.object('where', getWhereSchemaFor(Ingrediant))
+    where?: Where<Ingrediant>,
   ): Promise<Count> {
     return this.recipeRepository.ingrediants(id).delete(where);
   }
