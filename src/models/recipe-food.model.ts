@@ -28,6 +28,9 @@ export class RecipeFood extends Entity {
   })
   recipeId?: string;
 
+  @belongsTo(() => Food)
+  foodId: string;
+
   constructor(data?: Partial<RecipeFood>) {
     super(data);
   }
