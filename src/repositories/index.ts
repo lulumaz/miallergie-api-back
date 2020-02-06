@@ -29,3 +29,6 @@ export * from './role.repository';
 export * from './user.repository';
 export * from './user-role.repository';
 export * from './ingrediant.repository';
+export * from './food.repository';
+export * from './ingrediant.repository';
+export * from './recipe.repository';

@@ -46,18 +46,6 @@ export class Recipe extends Entity {
   })
   numberOfPeople?: number;
 
-  @belongsTo(() => Diet)
-  dietId: string;
-
-  @hasMany(() => Allergy)
-  allergies: Allergy[];
-
-  @hasMany(() => Intolerance)
-  intolerances: Intolerance[];
-
-  @hasMany(() => Ingrediant)
-  ingrediants: Ingrediant[];
-
   constructor(data?: Partial<Recipe>) {
     super(data);
   }

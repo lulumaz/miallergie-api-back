@@ -28,15 +28,6 @@ export class Food extends Entity {
   })
   classes?: object[];
 
-  @hasMany(() => Allergy)
-  allergies: Allergy[];
-
-  @hasMany(() => Diet)
-  diets: Diet[];
-
-  @hasMany(() => Intolerance)
-  intolerances: Intolerance[];
-
   constructor(data?: Partial<Food>) {
     super(data);
   }
