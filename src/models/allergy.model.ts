@@ -26,6 +26,11 @@ export class Allergy extends Entity {
   })
   createAt?: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<Allergy>) {
     super(data);
   }

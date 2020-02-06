@@ -5,7 +5,7 @@ import {model, property} from '@loopback/repository';
 
 @model()
 export class OutputRecipe extends InputRecipe {
-  @property({
+  /*@property({
     type: 'array',
     itemType: Allergy,
   })
@@ -15,7 +15,7 @@ export class OutputRecipe extends InputRecipe {
     type: 'array',
     itemType: Intolerance,
   })
-  intolerances?: Intolerance[];
+  intolerances?: Intolerance[];*/
 
   constructor(data?: Partial<OutputRecipe>) {
     super(data);

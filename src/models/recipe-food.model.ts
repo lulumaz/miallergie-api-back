@@ -23,6 +23,11 @@ export class RecipeFood extends Entity {
   })
   unit: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<RecipeFood>) {
     super(data);
   }

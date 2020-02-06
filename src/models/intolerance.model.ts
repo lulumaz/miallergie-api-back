@@ -26,6 +26,11 @@ export class Intolerance extends Entity {
   })
   createAt?: string;
 
+  @property({
+    type: 'string',
+  })
+  recipeId?: string;
+
   constructor(data?: Partial<Intolerance>) {
     super(data);
   }
