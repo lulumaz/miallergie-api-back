@@ -15,21 +15,18 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Recipe,
-  Intolerance,
-} from '../models';
+import {Recipe, Intolerance} from '../models';
 import {RecipeRepository} from '../repositories';
 
 export class RecipeIntoleranceController {
   constructor(
     @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
-  ) { }
+  ) {}
 
   @get('/recipes/{id}/intolerances', {
     responses: {
       '200': {
-        description: 'Array of Intolerance\'s belonging to Recipe',
+        description: "Array of Intolerance's belonging to Recipe",
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(Intolerance)},
@@ -61,11 +58,11 @@ export class RecipeIntoleranceController {
           schema: getModelSchemaRef(Intolerance, {
             title: 'NewIntoleranceInRecipe',
             exclude: ['id'],
-            optional: ['recipeId']
           }),
         },
       },
-    }) intolerance: Omit<Intolerance, 'id'>,
+    })
+    intolerance: Omit<Intolerance, 'id'>,
   ): Promise<Intolerance> {
     return this.recipeRepository.intolerances(id).create(intolerance);
   }
@@ -88,7 +85,8 @@ export class RecipeIntoleranceController {
       },
     })
     intolerance: Partial<Intolerance>,
-    @param.query.object('where', getWhereSchemaFor(Intolerance)) where?: Where<Intolerance>,
+    @param.query.object('where', getWhereSchemaFor(Intolerance))
+    where?: Where<Intolerance>,
   ): Promise<Count> {
     return this.recipeRepository.intolerances(id).patch(intolerance, where);
   }
@@ -103,7 +101,8 @@ export class RecipeIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Intolerance)) where?: Where<Intolerance>,
+    @param.query.object('where', getWhereSchemaFor(Intolerance))
+    where?: Where<Intolerance>,
   ): Promise<Count> {
     return this.recipeRepository.intolerances(id).delete(where);
   }

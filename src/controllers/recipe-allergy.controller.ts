@@ -15,21 +15,18 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Recipe,
-  Allergy,
-} from '../models';
+import {Recipe, Allergy} from '../models';
 import {RecipeRepository} from '../repositories';
 
 export class RecipeAllergyController {
   constructor(
     @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
-  ) { }
+  ) {}
 
   @get('/recipes/{id}/allergies', {
     responses: {
       '200': {
-        description: 'Array of Allergy\'s belonging to Recipe',
+        description: "Array of Allergy's belonging to Recipe",
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(Allergy)},
@@ -61,11 +58,11 @@ export class RecipeAllergyController {
           schema: getModelSchemaRef(Allergy, {
             title: 'NewAllergyInRecipe',
             exclude: ['id'],
-            optional: ['recipeId']
           }),
         },
       },
-    }) allergy: Omit<Allergy, 'id'>,
+    })
+    allergy: Omit<Allergy, 'id'>,
   ): Promise<Allergy> {
     return this.recipeRepository.allergies(id).create(allergy);
   }
@@ -88,7 +85,8 @@ export class RecipeAllergyController {
       },
     })
     allergy: Partial<Allergy>,
-    @param.query.object('where', getWhereSchemaFor(Allergy)) where?: Where<Allergy>,
+    @param.query.object('where', getWhereSchemaFor(Allergy))
+    where?: Where<Allergy>,
   ): Promise<Count> {
     return this.recipeRepository.allergies(id).patch(allergy, where);
   }
@@ -103,7 +101,8 @@ export class RecipeAllergyController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Allergy)) where?: Where<Allergy>,
+    @param.query.object('where', getWhereSchemaFor(Allergy))
+    where?: Where<Allergy>,
   ): Promise<Count> {
     return this.recipeRepository.allergies(id).delete(where);
   }
