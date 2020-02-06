@@ -11,12 +11,6 @@ export class RecipeFood extends Entity {
   })
   id?: string;
 
-  @belongsTo(() => Recipe)
-  recipeId: string;
-
-  @belongsTo(() => Food)
-  foodId: string;
-
   @property({
     type: 'number',
     required: true,
