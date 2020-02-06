@@ -82,8 +82,7 @@ export class RecipeController {
       this.response.status(531);
       return {error: "Properties 'dietId' must be defined"};
     }
-    await this.recipeRepository.diet(recipe.dietId);
-
+    await this.dietRepository.findById(recipe.dietId);
     return this.recipeRepository.create(recipe);
   }
 
