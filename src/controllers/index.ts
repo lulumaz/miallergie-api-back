@@ -20,3 +20,4 @@ export * from './recipe-recipe-intolerance.controller';
 export * from './food-food-diet.controller';
 export * from './food-food-allergy.controller';
 export * from './food-food-intolerance.controller';
+export * from './ingrediant.controller';
