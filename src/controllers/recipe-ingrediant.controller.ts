@@ -17,12 +17,15 @@ import {
   requestBody,
 } from '@loopback/rest';
 import {Recipe, Ingrediant} from '../models';
-import {RecipeRepository} from '../repositories';
+import {RecipeRepository, IngrediantRepository} from '../repositories';
 
 export class RecipeIngrediantController {
   constructor(
-    @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
+    @repository(RecipeRepository)
+    protected recipeRepository: RecipeRepository,
     @repository(FoodRepository) protected foodRepository: FoodRepository,
+    @repository(IngrediantRepository)
+    protected ingrediantRepository: IngrediantRepository,
   ) {}
 
   @get('/recipes/{id}/ingrediants', {
@@ -31,7 +34,10 @@ export class RecipeIngrediantController {
         description: 'Array of Recipe has many Ingrediant',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(Ingrediant)},
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Ingrediant),
+            },
           },
         },
       },
@@ -41,14 +47,25 @@ export class RecipeIngrediantController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Ingrediant>,
   ): Promise<Ingrediant[]> {
-    return this.recipeRepository.ingrediants(id).find(filter);
+    let myFilter: Filter<Ingrediant> = {};
+    if (filter) {
+      myFilter = filter;
+    }
+    myFilter.where = {
+      recipeId: id,
+    };
+    return this.ingrediantRepository.find(myFilter, {
+      strictObjectIDCoercion: true,
+    });
   }
 
   @post('/recipes/{id}/ingrediants', {
     responses: {
       '200': {
         description: 'Recipe model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Ingrediant)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(Ingrediant)},
+        },
       },
     },
   })
