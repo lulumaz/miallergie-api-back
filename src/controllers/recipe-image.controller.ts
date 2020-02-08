@@ -12,13 +12,18 @@ import {
 import multer = require('multer');
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function(_req, _file, cb) {
     cb(null, './storage/');
   },
 });
 const configMulter = {
   storage: storage,
-  fileFilter: function(req, file, callback) {
+  fileFilter: function(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    _req: any,
+    file: {originalname: string},
+    callback: (arg0: Error | null, arg1?: boolean) => void,
+  ) {
     const ext = file.originalname.split('.').pop();
     if (ext !== 'png' && ext !== 'jpg' && ext !== 'gif' && ext !== 'jpeg') {
       return callback(new Error('Only images are allowed'));
@@ -51,7 +56,7 @@ export class RecipeImageController {
       },
     })
     request: Request,
-    @inject(RestBindings.Http.RESPONSE) response: Response,
+    @inject(RestBindings.Http.RESPONSE) _response: Response,
   ): Promise<Object> {
     await this.recipeRepository.findById(id);
 
