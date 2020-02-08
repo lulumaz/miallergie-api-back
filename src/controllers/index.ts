@@ -21,3 +21,4 @@ export * from './food-food-intolerance.controller';
 export * from './ingredient.controller';
 export * from './recipe-ingredient.controller';
 export * from './ingredient-food.controller';
+export * from './recipe-file.controller';

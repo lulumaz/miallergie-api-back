@@ -4,11 +4,11 @@ import {
   model,
   property,
   belongsTo,
-  hasMany,
-} from '@loopback/repository';
+  hasMany, hasOne} from '@loopback/repository';
 import {RecipeAllergy} from './recipe-allergy.model';
 import {RecipeIntolerance} from './recipe-intolerance.model';
 import {Ingredient} from './ingredient.model';
+import {File} from './file.model';
 
 @model()
 export class Recipe extends Entity {
@@ -69,6 +69,9 @@ export class Recipe extends Entity {
 
   @hasMany(() => Ingredient)
   ingredients: Ingredient[];
+
+  @hasOne(() => File)
+  file: File;
 
   constructor(data?: Partial<Recipe>) {
     super(data);
