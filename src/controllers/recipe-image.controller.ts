@@ -1,3 +1,6 @@
+import {FileRepository} from './../repositories/file.repository';
+import {File} from './../models/file.model';
+import {Recipe} from './../models/recipe.model';
 import {repository} from '@loopback/repository';
 import {RecipeRepository} from './../repositories/recipe.repository';
 import {inject} from '@loopback/core';
@@ -8,6 +11,8 @@ import {
   Request,
   RestBindings,
   Response,
+  get,
+  getModelSchemaRef,
 } from '@loopback/rest';
 import multer = require('multer');
 
@@ -39,7 +44,27 @@ export class RecipeImageController {
   constructor(
     @repository(RecipeRepository)
     public recipeRepository: RecipeRepository,
+    @repository(FileRepository)
+    public fileRepository: FileRepository,
   ) {}
+
+  @get('/recipes/{id}/image', {
+    responses: {
+      '200': {
+        description: 'File belonging to Recipe',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(File),
+          },
+        },
+      },
+    },
+  })
+  async getFile(
+    @param.path.string('id') id: typeof Recipe.prototype.id,
+  ): Promise<File> {
+    return this.recipeRepository.image(id);
+  }
 
   @post('/recipes/{id}/uploadImage')
   async create(
@@ -57,27 +82,30 @@ export class RecipeImageController {
     })
     request: Request,
     @inject(RestBindings.Http.RESPONSE) _response: Response,
-  ): Promise<Object> {
-    await this.recipeRepository.findById(id);
+  ): Promise<File> {
+    const recipe: Recipe = await this.recipeRepository.findById(id);
 
-    return new Promise<object>((resolve, reject) => {
-      try {
-        const upload = multer(configMulter);
-        upload.single(id)(request, {} as any, err => {
-          if (err) {
-            console.error(err);
-            return reject(err.message);
-          }
-          resolve({
-            value: {
-              files: request.files,
-              fields: (request as any).fields,
-            },
-          });
+    return new Promise<File>((resolve, reject) => {
+      const upload = multer(configMulter);
+      upload.single(id)(request, {} as any, async err => {
+        if (err) {
+          console.error(err);
+          return reject(err.message);
+        }
+        if (recipe.imageId !== undefined) {
+          await this.fileRepository.deleteById(recipe.imageId);
+        }
+
+        const file: File = await this.fileRepository.create({
+          path: 'storage/' + request.file.filename,
+          name: request.file.originalname,
+          type: request.file.mimetype,
         });
-      } catch (error) {
-        console.error(error);
-      }
+        recipe.imageId = file.id ? file.id : '';
+        await this.recipeRepository.update(recipe);
+        //this.fileRepository.create({})
+        resolve(file);
+      });
     });
   }
 }

@@ -2,14 +2,18 @@ import {
   DefaultCrudRepository,
   repository,
   BelongsToAccessor,
-  HasManyRepositoryFactory, HasOneRepositoryFactory} from '@loopback/repository';
+  HasManyRepositoryFactory,
+  HasOneRepositoryFactory,
+} from '@loopback/repository';
 import {
   Recipe,
   RecipeRelations,
   Diet,
   RecipeAllergy,
   RecipeIntolerance,
-  Ingredient, File} from '../models';
+  Ingredient,
+  File,
+} from '../models';
 import {MongoDsDataSource} from '../datasources';
 import {inject, Getter} from '@loopback/core';
 import {DietRepository} from './diet.repository';
@@ -40,7 +44,7 @@ export class RecipeRepository extends DefaultCrudRepository<
     typeof Recipe.prototype.id
   >;
 
-  public readonly file: HasOneRepositoryFactory<File, typeof Recipe.prototype.id>;
+  public readonly image: BelongsToAccessor<File, typeof Recipe.prototype.id>;
 
   constructor(
     @inject('datasources.mongoDS') dataSource: MongoDsDataSource,
@@ -53,11 +57,14 @@ export class RecipeRepository extends DefaultCrudRepository<
       RecipeIntoleranceRepository
     >,
     @repository.getter('IngredientRepository')
-    protected ingredientRepositoryGetter: Getter<IngredientRepository>, @repository.getter('FileRepository') protected fileRepositoryGetter: Getter<FileRepository>,
+    protected ingredientRepositoryGetter: Getter<IngredientRepository>,
+    @repository.getter('FileRepository')
+    protected fileRepositoryGetter: Getter<FileRepository>,
   ) {
     super(Recipe, dataSource);
-    this.file = this.createHasOneRepositoryFactoryFor('file', fileRepositoryGetter);
-    this.registerInclusionResolver('file', this.file.inclusionResolver);
+    this.image = this.createBelongsToAccessorFor('image', fileRepositoryGetter,);
+    this.registerInclusionResolver('image', this.image.inclusionResolver);
+
     this.ingredients = this.createHasManyRepositoryFactoryFor(
       'ingredients',
       ingredientRepositoryGetter,

@@ -4,7 +4,9 @@ import {
   model,
   property,
   belongsTo,
-  hasMany, hasOne} from '@loopback/repository';
+  hasMany,
+  hasOne,
+} from '@loopback/repository';
 import {RecipeAllergy} from './recipe-allergy.model';
 import {RecipeIntolerance} from './recipe-intolerance.model';
 import {Ingredient} from './ingredient.model';
@@ -70,8 +72,8 @@ export class Recipe extends Entity {
   @hasMany(() => Ingredient)
   ingredients: Ingredient[];
 
-  @hasOne(() => File)
-  file: File;
+  @belongsTo(() => File)
+  imageId?: string;
 
   constructor(data?: Partial<Recipe>) {
     super(data);
