@@ -14,3 +14,4 @@ export * from './recipe-intolerance.model';
 export * from './food-diet.model';
 export * from './food-allergy.model';
 export * from './food-intolerance.model';
+export * from './ingredient.model';

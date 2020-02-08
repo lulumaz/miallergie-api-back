@@ -11,6 +11,7 @@ import {Intolerance} from './intolerance.model';
 import {Ingrediant} from './ingrediant.model';
 import {RecipeAllergy} from './recipe-allergy.model';
 import {RecipeIntolerance} from './recipe-intolerance.model';
+import {Ingredient} from './ingredient.model';
 
 @model()
 export class Recipe extends Entity {
@@ -59,6 +60,9 @@ export class Recipe extends Entity {
 
   @hasMany(() => RecipeIntolerance)
   recipeIntolerances: RecipeIntolerance[];
+
+  @hasMany(() => Ingredient)
+  ingredients: Ingredient[];
 
   constructor(data?: Partial<Recipe>) {
     super(data);
