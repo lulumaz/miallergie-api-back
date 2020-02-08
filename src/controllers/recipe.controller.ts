@@ -45,9 +45,7 @@ export class RecipeController {
         description: 'Recipe model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Recipe, {
-              includeRelations: true,
-            }),
+            schema: getModelSchemaRef(Recipe),
           },
         },
       },
@@ -67,7 +65,7 @@ export class RecipeController {
         'application/json': {
           schema: getModelSchemaRef(Recipe, {
             title: 'NewRecipe',
-            exclude: ['id'],
+            exclude: ['id', 'createAt'],
           }),
         },
       },

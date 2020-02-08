@@ -52,6 +52,12 @@ export class Recipe extends Entity {
   })
   numberOfPeople?: number;
 
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  createAt: string;
+
   @belongsTo(() => Diet)
   dietId: string;
 

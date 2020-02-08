@@ -23,8 +23,9 @@ export class Intolerance extends Entity {
 
   @property({
     type: 'date',
+    default: () => new Date(),
   })
-  createAt?: string;
+  createAt: string;
 
   constructor(data?: Partial<Intolerance>) {
     super(data);

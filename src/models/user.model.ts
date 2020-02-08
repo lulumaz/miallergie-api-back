@@ -67,6 +67,12 @@ export class User extends Entity {
   })
   id_diet?: string;
 
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  createAt: string;
+
   constructor(data?: Partial<User>) {
     super(data);
   }

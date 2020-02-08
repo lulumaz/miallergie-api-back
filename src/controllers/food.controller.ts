@@ -23,7 +23,7 @@ import {FoodRepository} from '../repositories';
 export class FoodController {
   constructor(
     @repository(FoodRepository)
-    public foodRepository : FoodRepository,
+    public foodRepository: FoodRepository,
   ) {}
 
   @post('/foods', {
@@ -40,7 +40,7 @@ export class FoodController {
         'application/json': {
           schema: getModelSchemaRef(Food, {
             title: 'NewFood',
-            exclude: ['id'],
+            exclude: ['id', 'createAt'],
           }),
         },
       },
@@ -80,7 +80,8 @@ export class FoodController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Food)) filter?: Filter<Food>,
+    @param.query.object('filter', getFilterSchemaFor(Food))
+    filter?: Filter<Food>,
   ): Promise<Food[]> {
     return this.foodRepository.find(filter);
   }
@@ -121,7 +122,8 @@ export class FoodController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Food)) filter?: Filter<Food>
+    @param.query.object('filter', getFilterSchemaFor(Food))
+    filter?: Filter<Food>,
   ): Promise<Food> {
     return this.foodRepository.findById(id, filter);
   }

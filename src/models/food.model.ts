@@ -31,6 +31,12 @@ export class Food extends Entity {
   })
   classes?: object[];
 
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  createAt: string;
+
   @hasMany(() => FoodDiet)
   foodDiets: FoodDiet[];
 

@@ -23,8 +23,9 @@ export class Allergy extends Entity {
 
   @property({
     type: 'date',
+    default: () => new Date(),
   })
-  createAt?: string;
+  createAt: string;
 
   constructor(data?: Partial<Allergy>) {
     super(data);
