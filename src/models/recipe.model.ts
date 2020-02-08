@@ -26,6 +26,12 @@ export class Recipe extends Entity {
   name: string;
 
   @property({
+    type: 'string',
+    required: true,
+  })
+  type: string; //entré, plat, dessert
+
+  @property({
     type: 'array',
     itemType: 'string',
   })
