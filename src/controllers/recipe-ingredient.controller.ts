@@ -1,3 +1,4 @@
+import {IngredientRepository} from './../repositories/ingredient.repository';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,16 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Recipe,
-  Ingredient,
-} from '../models';
+import {Recipe, Ingredient} from '../models';
 import {RecipeRepository} from '../repositories';
 
 export class RecipeIngredientController {
   constructor(
-    @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
-  ) { }
+    @repository(RecipeRepository)
+    protected recipeRepository: RecipeRepository,
+    @repository(IngredientRepository)
+    protected ingredientRepository: IngredientRepository,
+  ) {}
 
   @get('/recipes/{id}/ingredients', {
     responses: {
@@ -32,7 +33,10 @@ export class RecipeIngredientController {
         description: 'Array of Recipe has many Ingredient',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(Ingredient)},
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Ingredient),
+            },
           },
         },
       },
@@ -42,14 +46,25 @@ export class RecipeIngredientController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Ingredient>,
   ): Promise<Ingredient[]> {
-    return this.recipeRepository.ingredients(id).find(filter);
+    let myFilter: Filter<Ingredient> = {};
+    if (filter) {
+      myFilter = filter;
+    }
+    myFilter.where = {
+      recipeId: id,
+    };
+    return this.ingredientRepository.find(myFilter, {
+      strictObjectIDCoercion: true,
+    });
   }
 
   @post('/recipes/{id}/ingredients', {
     responses: {
       '200': {
         description: 'Recipe model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Ingredient)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(Ingredient)},
+        },
       },
     },
   })
@@ -61,11 +76,12 @@ export class RecipeIngredientController {
           schema: getModelSchemaRef(Ingredient, {
             title: 'NewIngredientInRecipe',
             exclude: ['id'],
-            optional: ['recipeId']
+            optional: ['recipeId'],
           }),
         },
       },
-    }) ingredient: Omit<Ingredient, 'id'>,
+    })
+    ingredient: Omit<Ingredient, 'id'>,
   ): Promise<Ingredient> {
     return this.recipeRepository.ingredients(id).create(ingredient);
   }
@@ -88,7 +104,8 @@ export class RecipeIngredientController {
       },
     })
     ingredient: Partial<Ingredient>,
-    @param.query.object('where', getWhereSchemaFor(Ingredient)) where?: Where<Ingredient>,
+    @param.query.object('where', getWhereSchemaFor(Ingredient))
+    where?: Where<Ingredient>,
   ): Promise<Count> {
     return this.recipeRepository.ingredients(id).patch(ingredient, where);
   }
@@ -103,7 +120,8 @@ export class RecipeIngredientController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Ingredient)) where?: Where<Ingredient>,
+    @param.query.object('where', getWhereSchemaFor(Ingredient))
+    where?: Where<Ingredient>,
   ): Promise<Count> {
     return this.recipeRepository.ingredients(id).delete(where);
   }

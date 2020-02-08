@@ -6,9 +6,6 @@ import {
   belongsTo,
   hasMany,
 } from '@loopback/repository';
-import {Allergy} from './allergy.model';
-import {Intolerance} from './intolerance.model';
-import {Ingrediant} from './ingrediant.model';
 import {RecipeAllergy} from './recipe-allergy.model';
 import {RecipeIntolerance} from './recipe-intolerance.model';
 import {Ingredient} from './ingredient.model';
@@ -51,9 +48,6 @@ export class Recipe extends Entity {
 
   @belongsTo(() => Diet)
   dietId: string;
-
-  @hasMany(() => Ingrediant)
-  ingrediants: Ingrediant[];
 
   @hasMany(() => RecipeAllergy)
   recipeAllergies: RecipeAllergy[];

@@ -1,8 +1,5 @@
-import {IngrediantRepository} from './../repositories/ingrediant.repository';
-import {Ingrediant} from './../models/ingrediant.model';
+import {IngredientRepository} from './../repositories/ingredient.repository';
 import {FoodRepository} from './../repositories/food.repository';
-import {OutputRecipe} from './../models/output/output-recipe.model';
-import {InputRecipe} from './../models/input/input-recipe.model';
 import {DietRepository} from './../repositories/diet.repository';
 import {inject} from '@loopback/core';
 import {
@@ -37,8 +34,8 @@ export class RecipeController {
     public dietRepository: DietRepository,
     @repository(FoodRepository)
     public foodRepository: FoodRepository,
-    @repository(IngrediantRepository)
-    public ingrediantRepository: IngrediantRepository,
+    @repository(IngredientRepository)
+    public ingredientRepository: IngredientRepository,
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
   ) {}
 
