@@ -78,6 +78,14 @@ spec:
               cpu: "500m"
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: file-miam-storage
+              mountPath: /home/node/app/storage
+      volumes:
+        - name: file-miam-storage
+          hostPath:
+            path: /k8s/storages/miam-api-file/
+            type: Directory
 ---
 #service
 kind: Service
