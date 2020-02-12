@@ -11,6 +11,7 @@ import {RecipeAllergy} from './recipe-allergy.model';
 import {RecipeIntolerance} from './recipe-intolerance.model';
 import {Ingredient} from './ingredient.model';
 import {File} from './file.model';
+import {User} from './user.model';
 
 @model()
 export class Recipe extends Entity {
@@ -74,6 +75,9 @@ export class Recipe extends Entity {
 
   @belongsTo(() => File)
   imageId?: string;
+
+  @belongsTo(() => User)
+  ownerUserId: string;
 
   constructor(data?: Partial<Recipe>) {
     super(data);

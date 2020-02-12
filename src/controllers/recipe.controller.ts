@@ -65,7 +65,7 @@ export class RecipeController {
         'application/json': {
           schema: getModelSchemaRef(Recipe, {
             title: 'NewRecipe',
-            exclude: ['id', 'createAt', 'imageId'],
+            exclude: ['id', 'createAt', 'imageId', 'ownerUserId'],
           }),
         },
       },
