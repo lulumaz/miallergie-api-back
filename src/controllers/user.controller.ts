@@ -447,8 +447,6 @@ export class UserController {
     });
     if (!user) throw new HttpErrors.Unauthorized('Invalid credentials');
 
-    console.log({base: user.password, req: credentials.password});
-
     const isPasswordMatched = await bcrypt.compare(
       credentials.password,
       user.password,
@@ -463,8 +461,6 @@ export class UserController {
       {strictObjectIDCoercion: true},
     );
     const {id, email, username} = user;
-
-    console.log({user, roles, userId: user.id});
 
     // convert a User object into a UserProfile object (reduced set of properties)
     const userProfile = this.userService.convertToUserProfile(user);
