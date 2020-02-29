@@ -1,3 +1,11 @@
+import {Diet} from './../models/diet.model';
+import {PasswordHasher} from './../services/hash';
+import {SecurityBindings, UserProfile} from '@loopback/security';
+import {
+  TokenService,
+  UserService,
+  authenticate,
+} from '@loopback/authentication';
 import {SecuredType} from './../auth/MyAuthMetadataProvider';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
@@ -33,6 +41,11 @@ import {secured} from '../auth/MyAuthMetadataProvider';
 import {validateRegister} from '../utils/validator';
 import {inject} from '@loopback/core';
 import {property, Entity, model} from '@loopback/repository';
+import {
+  PasswordHasherBindings,
+  TokenServiceBindings,
+  UserServiceBindings,
+} from '../auth/keys';
 const bcrypt = require('bcrypt');
 
 const {sign} = require('jsonwebtoken');
@@ -107,6 +120,12 @@ export class UserController {
     @repository(UserRoleRepository)
     private userRoleRepository: UserRoleRepository,
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public passwordHasher: PasswordHasher,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: UserService<User, Credentials>,
   ) {}
 
   @post('/users', {
@@ -128,7 +147,13 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(User, {
             title: 'NewUser',
-            exclude: ['id', 'createAt'],
+            exclude: [
+              'id',
+              'createAt',
+              'ids_allergie',
+              'ids_intolerance',
+              'id_diet',
+            ],
           }),
         },
       },
@@ -143,9 +168,11 @@ export class UserController {
     }
 
     //Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(user.password, salt);
+    const hashedPassword = await this.passwordHasher.hashPassword(
+      user.password,
+    );
     user.password = hashedPassword;
+
     const prom: Promise<User> = this.userRepository.create(user);
     prom
       .then((savedUser: User) => {
@@ -348,7 +375,9 @@ export class UserController {
         await this.userRepository.replaceById(newUser.id, newUser);
       } else {
         this.response.status(532);
-        return {error: 'Un utilisateur avec la même adresse mail existe déjà.'};
+        return {
+          error: 'Un utilisateur avec la même adresse mail existe déjà.',
+        };
       }
     }
 
@@ -427,12 +456,21 @@ export class UserController {
     if (!isPasswordMatched)
       throw new HttpErrors.Unauthorized('Invalid credentials');
 
-    const tokenObject = {email: credentials.email};
-    const token = await signAsync(tokenObject, JWT_SECRET);
-    const roles = await this.userRoleRepository.find({
-      where: {userId: user.id},
-    });
+    const roles = await this.userRoleRepository.find(
+      {
+        where: {userId: user.id},
+      },
+      {strictObjectIDCoercion: true},
+    );
     const {id, email, username} = user;
+
+    console.log({user, roles, userId: user.id});
+
+    // convert a User object into a UserProfile object (reduced set of properties)
+    const userProfile = this.userService.convertToUserProfile(user);
+
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
 
     return {
       token,
@@ -441,5 +479,26 @@ export class UserController {
       email,
       roles: roles.map(r => r.roleId),
     };
+  }
+
+  @get('/users/me', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'The current user profile',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(User, {includeRelations: true}),
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  async printCurrentUser(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+  ): Promise<UserProfile> {
+    return currentUserProfile;
   }
 }

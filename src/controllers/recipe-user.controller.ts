@@ -1,22 +1,13 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  Recipe,
-  User,
-} from '../models';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {Recipe, User} from '../models';
 import {RecipeRepository} from '../repositories';
 
 export class RecipeUserController {
   constructor(
     @repository(RecipeRepository)
     public recipeRepository: RecipeRepository,
-  ) { }
+  ) {}
 
   @get('/recipes/{id}/user', {
     responses: {
@@ -33,6 +24,6 @@ export class RecipeUserController {
   async getUser(
     @param.path.string('id') id: typeof Recipe.prototype.id,
   ): Promise<User> {
-    return this.recipeRepository.user(id);
+    return this.recipeRepository.ownerUser(id);
   }
 }

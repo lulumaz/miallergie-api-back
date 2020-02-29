@@ -12,7 +12,9 @@ import {
   RecipeAllergy,
   RecipeIntolerance,
   Ingredient,
-  File, User} from '../models';
+  File,
+  User,
+} from '../models';
 import {MongoDsDataSource} from '../datasources';
 import {inject, Getter} from '@loopback/core';
 import {DietRepository} from './diet.repository';
@@ -46,7 +48,10 @@ export class RecipeRepository extends DefaultCrudRepository<
 
   public readonly image: BelongsToAccessor<File, typeof Recipe.prototype.id>;
 
-  public readonly ownerUser: BelongsToAccessor<User, typeof Recipe.prototype.id>;
+  public readonly ownerUser: BelongsToAccessor<
+    User,
+    typeof Recipe.prototype.id
+  >;
 
   constructor(
     @inject('datasources.mongoDS') dataSource: MongoDsDataSource,
@@ -61,12 +66,20 @@ export class RecipeRepository extends DefaultCrudRepository<
     @repository.getter('IngredientRepository')
     protected ingredientRepositoryGetter: Getter<IngredientRepository>,
     @repository.getter('FileRepository')
-    protected fileRepositoryGetter: Getter<FileRepository>, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>,
+    protected fileRepositoryGetter: Getter<FileRepository>,
+    @repository.getter('UserRepository')
+    protected userRepositoryGetter: Getter<UserRepository>,
   ) {
     super(Recipe, dataSource);
-    this.ownerUser = this.createBelongsToAccessorFor('ownerUser', userRepositoryGetter,);
-    this.registerInclusionResolver('ownerUser', this.ownerUser.inclusionResolver);
-    this.image = this.createBelongsToAccessorFor('image', fileRepositoryGetter,);
+    this.ownerUser = this.createBelongsToAccessorFor(
+      'ownerUser',
+      userRepositoryGetter,
+    );
+    this.registerInclusionResolver(
+      'ownerUser',
+      this.ownerUser.inclusionResolver,
+    );
+    this.image = this.createBelongsToAccessorFor('image', fileRepositoryGetter);
     this.registerInclusionResolver('image', this.image.inclusionResolver);
 
     this.ingredients = this.createHasManyRepositoryFactoryFor(

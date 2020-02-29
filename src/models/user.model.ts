@@ -83,3 +83,18 @@ export interface UserRelations {
 }
 
 export type UserWithRelations = User & UserRelations;
+
+export class Credentials {
+  id: string;
+  email: string;
+  password: string;
+}
+
+@model()
+export class NewUser extends User {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+}
