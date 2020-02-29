@@ -1,4 +1,4 @@
-import {Diet} from './../models/diet.model';
+import {Credentials} from './../models/user.model';
 import {PasswordHasher} from './../services/hash';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {
@@ -6,7 +6,6 @@ import {
   UserService,
   authenticate,
 } from '@loopback/authentication';
-import {SecuredType} from './../auth/MyAuthMetadataProvider';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
@@ -32,12 +31,6 @@ import {
 } from '@loopback/rest';
 import {User} from '../models';
 import {UserRepository, UserRoleRepository} from '../repositories';
-import {promisify} from 'util';
-import {
-  Credentials,
-  JWT_SECRET,
-} from '../auth/MyAuthAuthenticationStrategyProvider';
-import {secured} from '../auth/MyAuthMetadataProvider';
 import {validateRegister} from '../utils/validator';
 import {inject} from '@loopback/core';
 import {property, Entity, model} from '@loopback/repository';
@@ -46,10 +39,7 @@ import {
   TokenServiceBindings,
   UserServiceBindings,
 } from '../auth/keys';
-const bcrypt = require('bcrypt');
 
-const {sign} = require('jsonwebtoken');
-const signAsync = promisify(sign);
 @model({
   settings: {
     indexes: {
@@ -194,7 +184,6 @@ export class UserController {
     return prom;
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/users/count', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -211,7 +200,6 @@ export class UserController {
     return this.userRepository.count(where);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/users', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -326,6 +314,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async replaceById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -338,6 +327,8 @@ export class UserController {
       },
     })
     user: Omit<UserChangePassword, 'id'>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<void | {error: string}> {
     const newUser: User = await this.userRepository.findById(id); //getting actual user
 
@@ -382,11 +373,17 @@ export class UserController {
     }
 
     if (user.newPassword && user.oldPassword) {
-      const isPasswordMatched = await bcrypt.compare(
+      /*const isPasswordMatched = await bcrypt.compare(
         user.oldPassword,
         newUser.password,
-      );
-      if (isPasswordMatched) {
+      );*/
+      const test = await this.userService.verifyCredentials({
+        email: user.email,
+        password: user.oldPassword,
+        id: id,
+      });
+
+      if (test) {
         //validating new user
         newUser.password = user.newPassword;
         const {error} = validateRegister(newUser);
@@ -396,8 +393,9 @@ export class UserController {
         }
 
         //Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(newUser.password, salt);
+        const hashedPassword = await this.passwordHasher.hashPassword(
+          newUser.password,
+        );
         newUser.password = hashedPassword;
         await this.userRepository.replaceById(newUser.id, newUser);
       } else {
@@ -407,7 +405,6 @@ export class UserController {
     }
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @del('/users/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -442,17 +439,8 @@ export class UserController {
   ) {
     if (!credentials.email || !credentials.password)
       throw new HttpErrors.BadRequest('Missing email or Password');
-    const user = await this.userRepository.findOne({
-      where: {email: credentials.email},
-    });
-    if (!user) throw new HttpErrors.Unauthorized('Invalid credentials');
 
-    const isPasswordMatched = await bcrypt.compare(
-      credentials.password,
-      user.password,
-    );
-    if (!isPasswordMatched)
-      throw new HttpErrors.Unauthorized('Invalid credentials');
+    const user = await this.userService.verifyCredentials(credentials);
 
     const roles = await this.userRoleRepository.find(
       {

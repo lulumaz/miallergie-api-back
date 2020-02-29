@@ -1,7 +1,6 @@
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/context';
-import {SecuredType, secured} from '../auth/MyAuthMetadataProvider';
 
 /**
  * OpenAPI response for ping()
@@ -61,7 +60,6 @@ export class PingController {
       },
     },
   })
-  @secured(SecuredType.IS_AUTHENTICATED)
   testIsAuthenticated() {
     return {message: 'isAuthenticated: OK'};
   }
@@ -74,7 +72,6 @@ export class PingController {
       },
     },
   })
-  @secured(SecuredType.PERMIT_ALL)
   testPermitAll() {
     return {message: 'permitAll: OK'};
   }
@@ -87,12 +84,11 @@ export class PingController {
       },
     },
   })
-  @secured(SecuredType.DENY_ALL)
   testDenyAll() {
     return {message: 'denyAll: OK'};
   }
 
-  @get('/ping/has-roles', {
+  @get('/ping/has-admin-role', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
@@ -100,7 +96,6 @@ export class PingController {
       },
     },
   })
-  @secured(SecuredType.HAS_ROLES, ['ADMIN'])
   testHasRoles() {
     return {message: 'hasRoles: OK'};
   }

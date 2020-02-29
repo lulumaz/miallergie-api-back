@@ -20,13 +20,6 @@ import {
   AuthenticationComponent,
 } from '@loopback/authentication';
 import {AuthorizationComponent} from '@loopback/authorization';
-
-import {MyAuthMetadataProvider} from './auth/MyAuthMetadataProvider';
-import {
-  MyAuthBindings,
-  MyAuthActionProvider,
-} from './auth/MyAuthActionProvider';
-import {MyAuthAuthenticationStrategyProvider} from './auth/MyAuthAuthenticationStrategyProvider';
 import {HealthComponent} from '@loopback/extension-health';
 import {
   TokenServiceBindings,

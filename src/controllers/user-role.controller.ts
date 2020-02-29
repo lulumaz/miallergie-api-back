@@ -1,4 +1,3 @@
-import {SecuredType} from './../auth/MyAuthMetadataProvider';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
@@ -21,7 +20,6 @@ import {
 } from '@loopback/rest';
 import {UserRole} from '../models';
 import {UserRoleRepository} from '../repositories';
-import {secured} from '../auth/MyAuthMetadataProvider';
 
 export class UserRoleController {
   constructor(
@@ -29,7 +27,6 @@ export class UserRoleController {
     public userRoleRepository: UserRoleRepository,
   ) {}
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @post('/user-roles', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -55,7 +52,6 @@ export class UserRoleController {
     return this.userRoleRepository.create(userRole);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/user-roles/count', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -72,7 +68,6 @@ export class UserRoleController {
     return this.userRoleRepository.count(where);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/user-roles', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -96,7 +91,6 @@ export class UserRoleController {
     return this.userRoleRepository.find(filter);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @patch('/user-roles', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -121,7 +115,6 @@ export class UserRoleController {
     return this.userRoleRepository.updateAll(userRole, where);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @get('/user-roles/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -143,7 +136,6 @@ export class UserRoleController {
     return this.userRoleRepository.findById(id, filter);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @patch('/user-roles/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -166,7 +158,6 @@ export class UserRoleController {
     await this.userRoleRepository.updateById(id, userRole);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @put('/user-roles/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -182,7 +173,6 @@ export class UserRoleController {
     await this.userRoleRepository.replaceById(id, userRole);
   }
 
-  @secured(SecuredType.HAS_ROLES, ['Admin'])
   @del('/user-roles/{id}', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
