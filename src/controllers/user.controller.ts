@@ -1,3 +1,4 @@
+import {UserWithRole} from './../services/user-service';
 import {Credentials} from './../models/user.model';
 import {PasswordHasher} from './../services/hash';
 import {SecurityBindings, UserProfile} from '@loopback/security';
@@ -450,8 +451,11 @@ export class UserController {
     );
     const {id, email, username} = user;
 
+    const userWithRole: UserWithRole = new UserWithRole(user);
+    userWithRole.roles = roles;
+
     // convert a User object into a UserProfile object (reduced set of properties)
-    const userProfile = this.userService.convertToUserProfile(user);
+    const userProfile = this.userService.convertToUserProfile(userWithRole);
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);

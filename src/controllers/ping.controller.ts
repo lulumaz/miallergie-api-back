@@ -1,6 +1,9 @@
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/context';
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
+import {basicAuthorization} from '../services/authorizor';
 
 /**
  * OpenAPI response for ping()
@@ -60,6 +63,7 @@ export class PingController {
       },
     },
   })
+  @authenticate('jwt')
   testIsAuthenticated() {
     return {message: 'isAuthenticated: OK'};
   }
@@ -84,6 +88,11 @@ export class PingController {
       },
     },
   })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: [],
+    voters: [basicAuthorization],
+  })
   testDenyAll() {
     return {message: 'denyAll: OK'};
   }
@@ -95,6 +104,11 @@ export class PingController {
         description: 'ping is ok if user is ADMIN',
       },
     },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin'],
+    voters: [basicAuthorization],
   })
   testHasRoles() {
     return {message: 'hasRoles: OK'};

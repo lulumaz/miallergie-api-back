@@ -1,4 +1,4 @@
-import {Role} from './../models/role.model';
+import {UserRole} from './../models/user/user-role.model';
 import {Credentials, UserWithRelations} from './../models/user.model';
 // Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: loopback4-example-shopping
@@ -58,7 +58,7 @@ export class MyUserService implements UserService<User, Credentials> {
       id: user.id,
       email: user.email,
       [securityId]: user.id ? user.id : '',
-      roles: user.roles,
+      roles: user.roles.map(r => r.roleId),
     };
 
     return userProfile;
@@ -66,5 +66,5 @@ export class MyUserService implements UserService<User, Credentials> {
 }
 
 export class UserWithRole extends User {
-  roles: Role[];
+  roles: UserRole[];
 }
