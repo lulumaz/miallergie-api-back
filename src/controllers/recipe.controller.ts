@@ -214,7 +214,7 @@ export class RecipeController {
     if (currentRecipe.ownerUserId.toString() === currentUserProfile.id) {
       await this.recipeRepository.updateById(id, recipe);
     } else {
-      throw new NotFound('User is not owner of this resource');
+      throw new NotFound(404, 'User is not owner of this resource');
     }
   }
 
@@ -240,7 +240,7 @@ export class RecipeController {
     if (currentRecipe.ownerUserId.toString() === currentUserProfile.id) {
       await this.recipeRepository.replaceById(id, recipe);
     } else {
-      throw new NotFound('User is not owner of this resource');
+      throw new NotFound(404, 'User is not owner of this resource');
     }
   }
 
@@ -265,7 +265,7 @@ export class RecipeController {
     if (recipe.ownerUserId.toString() === currentUserProfile.id) {
       await this.recipeRepository.deleteById(id);
     } else {
-      throw new NotFound('User is not owner of this resource');
+      throw new NotFound(404, 'User is not owner of this resource');
     }
   }
 }
