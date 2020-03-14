@@ -1,3 +1,8 @@
+import {authorize} from '@loopback/authorization';
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
+import {NotFound} from './../utils/error';
+import {SecurityBindings, UserProfile} from '@loopback/security';
+import {authenticate} from '@loopback/authentication';
 import {IngredientRepository} from './../repositories/ingredient.repository';
 import {FoodRepository} from './../repositories/food.repository';
 import {DietRepository} from './../repositories/diet.repository';
@@ -25,6 +30,7 @@ import {
 } from '@loopback/rest';
 import {Recipe} from '../models';
 import {RecipeRepository} from '../repositories';
+import {basicAuthorization} from '../services/authorizor';
 
 export class RecipeController {
   constructor(
@@ -40,6 +46,7 @@ export class RecipeController {
   ) {}
 
   @post('/recipes', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model instance',
@@ -59,6 +66,7 @@ export class RecipeController {
       },
     },
   })
+  @authenticate('jwt')
   async create(
     @requestBody({
       content: {
@@ -71,17 +79,21 @@ export class RecipeController {
       },
     })
     recipe: Omit<Recipe, 'id'>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<Recipe | {error: any}> {
     //check for diet
     if (recipe.dietId === undefined) {
       this.response.status(531);
       return {error: "Properties 'dietId' must be defined"};
     }
+    recipe.ownerUserId = currentUserProfile.id;
     await this.dietRepository.findById(recipe.dietId);
     return this.recipeRepository.create(recipe);
   }
 
   @get('/recipes/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model count',
@@ -89,6 +101,7 @@ export class RecipeController {
       },
     },
   })
+  @authenticate('jwt')
   async count(
     @param.query.object('where', getWhereSchemaFor(Recipe))
     where?: Where<Recipe>,
@@ -97,6 +110,7 @@ export class RecipeController {
   }
 
   @get('/recipes', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Recipe model instances',
@@ -111,22 +125,27 @@ export class RecipeController {
       },
     },
   })
+  @authenticate('jwt')
   async find(
     @param.query.object('filter', getFilterSchemaFor(Recipe))
     filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
-    //TODO: add filter
-    //TODO: detail elements
     return this.recipeRepository.find(filter);
   }
 
   @patch('/recipes', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin'],
+    voters: [basicAuthorization],
   })
   async updateAll(
     @requestBody({
@@ -144,6 +163,7 @@ export class RecipeController {
   }
 
   @get('/recipes/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model instance',
@@ -155,6 +175,7 @@ export class RecipeController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(
     @param.path.string('id') id: string,
     @param.query.object('filter', getFilterSchemaFor(Recipe))
@@ -165,12 +186,17 @@ export class RecipeController {
   }
 
   @patch('/recipes/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Recipe PATCH success',
       },
+      '403': {
+        description: 'User is not owner of this resource',
+      },
     },
   })
+  @authenticate('jwt')
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -181,33 +207,65 @@ export class RecipeController {
       },
     })
     recipe: Recipe,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
   ): Promise<void> {
-    await this.recipeRepository.updateById(id, recipe);
+    const currentRecipe = await this.recipeRepository.findById(id);
+    if (currentRecipe.ownerUserId.toString() === currentUserProfile.id) {
+      await this.recipeRepository.updateById(id, recipe);
+    } else {
+      throw new NotFound('User is not owner of this resource');
+    }
   }
 
   @put('/recipes/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Recipe PUT success',
       },
+      '403': {
+        description: 'User is not owner of this resource',
+      },
     },
   })
+  @authenticate('jwt')
   async replaceById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @requestBody() recipe: Recipe,
   ): Promise<void> {
-    //TODO: control data
-    await this.recipeRepository.replaceById(id, recipe);
+    const currentRecipe = await this.recipeRepository.findById(id);
+    if (currentRecipe.ownerUserId.toString() === currentUserProfile.id) {
+      await this.recipeRepository.replaceById(id, recipe);
+    } else {
+      throw new NotFound('User is not owner of this resource');
+    }
   }
 
   @del('/recipes/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Recipe DELETE success',
       },
+      '403': {
+        description: 'User is not owner of this resource',
+      },
     },
   })
-  async deleteById(@param.path.string('id') id: string): Promise<void> {
-    await this.recipeRepository.deleteById(id);
+  @authenticate('jwt')
+  async deleteById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @param.path.string('id') id: string,
+  ): Promise<void> {
+    const recipe = await this.recipeRepository.findById(id);
+    if (recipe.ownerUserId.toString() === currentUserProfile.id) {
+      await this.recipeRepository.deleteById(id);
+    } else {
+      throw new NotFound('User is not owner of this resource');
+    }
   }
 }
