@@ -81,11 +81,10 @@ export class RecipeController {
     recipe: Omit<Recipe, 'id'>,
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
-  ): Promise<Recipe | {error: any}> {
+  ): Promise<Recipe> {
     //check for diet
     if (recipe.dietId === undefined) {
-      this.response.status(531);
-      return {error: "Properties 'dietId' must be defined"};
+      throw new NotFound(531, "Properties 'dietId' must be defined");
     }
     recipe.ownerUserId = currentUserProfile.id;
     await this.dietRepository.findById(recipe.dietId);

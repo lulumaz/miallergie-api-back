@@ -1,3 +1,4 @@
+import {NotFound} from './../utils/error';
 import {UserWithRole} from './../services/user-service';
 import {Credentials} from './../models/user.model';
 import {PasswordHasher} from './../services/hash';
@@ -150,12 +151,11 @@ export class UserController {
       },
     })
     user: Omit<User, 'id'>,
-  ): Promise<User | {error: string}> {
+  ): Promise<User> {
     //validate with Joi
     const {error} = validateRegister(user);
     if (error) {
-      this.response.status(530);
-      return {error: error.details[0].message};
+      throw new NotFound(530, error.details[0].message);
     }
 
     //Hash the password
@@ -330,7 +330,7 @@ export class UserController {
     user: Omit<UserChangePassword, 'id'>,
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
-  ): Promise<void | {error: string}> {
+  ): Promise<void> {
     const newUser: User = await this.userRepository.findById(id); //getting actual user
 
     if (user.username) {
@@ -342,14 +342,12 @@ export class UserController {
         //validating new user
         const {error} = validateRegister(newUser);
         if (error) {
-          this.response.status(530);
-          return {error: error.details[0].message};
+          throw new NotFound(530, error.details[0].message);
         }
 
         await this.userRepository.replaceById(newUser.id, newUser);
       } else {
-        this.response.status(531);
-        return {error: 'Un utilisateur avec le même nom existe déjà.'};
+        throw new NotFound(531, 'Un utilisateur avec le même nom existe déjà.');
       }
     }
 
@@ -360,16 +358,15 @@ export class UserController {
         //validating new user
         const {error} = validateRegister(newUser);
         if (error) {
-          this.response.status(530);
-          return {error: error.details[0].message};
+          throw new NotFound(530, error.details[0].message);
         }
 
         await this.userRepository.replaceById(newUser.id, newUser);
       } else {
-        this.response.status(532);
-        return {
-          error: 'Un utilisateur avec la même adresse mail existe déjà.',
-        };
+        throw new NotFound(
+          532,
+          'Un utilisateur avec la même adresse mail existe déjà.',
+        );
       }
     }
 
@@ -389,8 +386,7 @@ export class UserController {
         newUser.password = user.newPassword;
         const {error} = validateRegister(newUser);
         if (error) {
-          this.response.status(530);
-          return {error: error.details[0].message};
+          throw new NotFound(530, error.details[0].message);
         }
 
         //Hash the password
@@ -400,8 +396,7 @@ export class UserController {
         newUser.password = hashedPassword;
         await this.userRepository.replaceById(newUser.id, newUser);
       } else {
-        this.response.status(533);
-        return {error: "L'ancien mot de passe n'est pas le bon"};
+        throw new NotFound(533, "L'ancien mot de passe n'est pas le bon");
       }
     }
   }
