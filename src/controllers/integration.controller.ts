@@ -19,7 +19,7 @@ export class IntegrationController {
     public foodRepository: FoodRepository,
   ) {}
 
-  @post('/ingredients/integration/', {
+  @post('/foods/integration/', {
     responses: {
       '200': {
         description: 'Ingredient model instance',
