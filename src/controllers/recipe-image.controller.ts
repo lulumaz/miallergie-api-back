@@ -87,6 +87,8 @@ export class RecipeImageController {
 
     return new Promise<File>((resolve, reject) => {
       const upload = multer(configMulter);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
       upload.single(id)(request, {} as any, async err => {
         if (err) {
           console.error(err);
