@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authorize} from '@loopback/authorization';
 import {authenticate} from '@loopback/authentication';
 import {FoodRepository} from './../repositories/food.repository';
@@ -18,6 +19,28 @@ export class IntegrationController {
   ) {}
 
   @post('/foods/integration/', {
+    security: OPERATION_SECURITY_SPEC,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Food, {
+              title: 'NewFood',
+              exclude: [
+                'id',
+                'classes',
+                'createAt',
+                'foodAllergies',
+                'foodDiets',
+                'foodIntolerances',
+                'parent',
+              ],
+            }),
+          },
+        },
+      },
+    },
     responses: {
       '200': {
         description: 'Ingredient model instance',
