@@ -1,3 +1,4 @@
+import {BcryptHasher} from './services/hash';
 import {UserRoleRelations} from './models/user/user-role.model';
 import {User, UserRelations} from './models/user.model';
 import {UserRoleRepository} from './repositories/user-role.repository';
@@ -7,7 +8,6 @@ import {UserRepository} from './repositories/user.repository';
 import {MongoDsDataSource} from './datasources';
 import {Count} from '@loopback/repository';
 import {UserRole} from './models';
-const bcrypt = require('bcrypt');
 //permet de remplir la base avec les données nécéssaire au foncitonnement de l'api
 
 const exec = async function() {
@@ -19,7 +19,8 @@ const exec = async function() {
   const userRoleRepository: UserRoleRepository = new UserRoleRepository(
     mongoDsDataSource,
   );
-
+  //services
+  const passwordHasher: BcryptHasher = new BcryptHasher(10);
   //création d'un role admin, classic
   const roleList: Partial<Role>[] = [
     {
@@ -48,8 +49,7 @@ const exec = async function() {
   }
   //création d'un compte utilisateur ayant le role admin
   //Hash the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash('administrator', salt);
+  const hashedPassword = await passwordHasher.hashPassword('administrator');
   const password = hashedPassword;
   const unserAdmin: Partial<User> = {
     email: 'miallergie@gmail.com',
@@ -64,6 +64,7 @@ const exec = async function() {
         username: unserAdmin.username,
       },
     });
+    console.log({user: user});
     if (!user) user = await userRepository.create(unserAdmin); //if user does't exist then create it
     //adding role to user
     const nUserRole: Partial<UserRole> = {

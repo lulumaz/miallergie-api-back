@@ -27,6 +27,6 @@ RUN npm run build
 ENV HOST=0.0.0.0 PORT=3000
 
 EXPOSE ${PORT}
-#CMD [ "node", "." ]
+RUN npm initBase
 CMD [ "node",".","--mongoHost=mongo-miam.miam.svc.cluster.local", "--mongoPort=27017", "--mongoDb=miam-app"]
 
