@@ -2,9 +2,7 @@ import {authorize} from '@loopback/authorization';
 import {authenticate} from '@loopback/authentication';
 import {FoodRepository} from './../repositories/food.repository';
 import {Food} from './../models/food.model';
-import {repository, property} from '@loopback/repository';
-import {IngredientRepository} from './../repositories/ingredient.repository';
-import {Ingredient} from './../models/ingredient.model';
+import {repository} from '@loopback/repository';
 import {getModelSchemaRef} from '@loopback/rest';
 // Uncomment these imports to begin using these cool features!
 
@@ -15,7 +13,7 @@ import {basicAuthorization} from '../services/authorizor';
 
 export class IntegrationController {
   constructor(
-    @repository(IngredientRepository)
+    @repository(FoodRepository)
     public foodRepository: FoodRepository,
   ) {}
 
@@ -71,9 +69,23 @@ export class IntegrationController {
         },
       },
     })
-    food: Omit<Food, 'id'>,
+    foods: Omit<Food, 'id'>[],
   ): Promise<Food[]> {
     //TOOD save missing and get id
-    return [];
+    const res: Food[] = [];
+    for (const food of foods) {
+      let bddFood = await this.foodRepository.findOne({
+        where: {name: food.name},
+      });
+      if (bddFood === null) {
+        //n'existe pas
+        //donc création
+        bddFood = await this.foodRepository.create(food);
+      }
+
+      //récupération de l'id
+      res.push(new Food({id: bddFood.id, name: bddFood.name}));
+    }
+    return res;
   }
 }
