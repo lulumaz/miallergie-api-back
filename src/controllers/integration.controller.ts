@@ -1,3 +1,6 @@
+import {RecipeRepository} from './../repositories/recipe.repository';
+import {IntoleranceRepository} from './../repositories/intolerance.repository';
+import {Intolerance} from './../models/intolerance.model';
 import {DietRepository} from './../repositories/diet.repository';
 import {Diet} from './../models/diet.model';
 import {AllergyRepository} from './../repositories/allergy.repository';
@@ -24,6 +27,10 @@ export class IntegrationController {
     public allergyRepository: AllergyRepository,
     @repository(DietRepository)
     public dietRepository: DietRepository,
+    @repository(IntoleranceRepository)
+    public intoleranceRepository: IntoleranceRepository,
+    @repository(RecipeRepository)
+    public recipeRepository: RecipeRepository,
   ) {}
 
   @post('/foods/integration/', {
@@ -258,6 +265,82 @@ export class IntegrationController {
 
       //récupération de l'id
       res.push(new Diet({id: bddDiet.id, name: bddDiet.name}));
+    }
+    return res;
+  }
+
+  @post('/intolerances/integration/', {
+    security: OPERATION_SECURITY_SPEC,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Intolerance, {
+              title: 'NewIntolerances',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      '200': {
+        description: 'Ingredient model instance',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Intolerance, {
+                title: 'NewIntolerances',
+                exclude: ['createAt'],
+              }),
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin', 'Integration'],
+    voters: [basicAuthorization],
+  })
+  async createIntolerance(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Intolerance, {
+              title: 'NewIntolerances',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    })
+    intolerances: Omit<Intolerance, 'id'>[],
+  ): Promise<Intolerance[]> {
+    //TOOD save missing and get id
+    const res: Intolerance[] = [];
+    for (const intolerance of intolerances) {
+      let bddIntolerance = await this.intoleranceRepository.findOne({
+        where: {name: intolerance.name},
+      });
+      if (bddIntolerance === null) {
+        //n'existe pas
+        //donc création
+        bddIntolerance = await this.intoleranceRepository.create(intolerance);
+      }
+
+      //récupération de l'id
+      res.push(
+        new Intolerance({
+          id: bddIntolerance.id,
+          name: bddIntolerance.name,
+        }),
+      );
     }
     return res;
   }
