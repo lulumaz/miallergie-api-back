@@ -1,3 +1,7 @@
+import {NotFound} from './../utils/error';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile} from '@loopback/security';
+import {Recipe} from './../models/recipe.model';
 import {RecipeRepository} from './../repositories/recipe.repository';
 import {IntoleranceRepository} from './../repositories/intolerance.repository';
 import {Intolerance} from './../models/intolerance.model';
@@ -347,25 +351,21 @@ export class IntegrationController {
 
   @post('/recipes/integration/', {
     security: OPERATION_SECURITY_SPEC,
-    deprecated: true,
     requestBody: {
       content: {
         'application/json': {
-          schema: {
-            type: 'array',
-            items: getModelSchemaRef(Food, {
-              title: 'NewFood',
-              exclude: [
-                'id',
-                'classes',
-                'createAt',
-                'foodAllergies',
-                'foodDiets',
-                'foodIntolerances',
-                'parent',
-              ],
-            }),
-          },
+          schema: getModelSchemaRef(Recipe, {
+            title: 'NewRecipe',
+            exclude: ['id', 'createAt'],
+            optional: [
+              'difficulty',
+              'duration',
+              'numberOfPeople',
+              'imageId',
+              'stages',
+              'type',
+            ],
+          }),
         },
       },
     },
@@ -374,20 +374,18 @@ export class IntegrationController {
         description: 'Ingredient model instance',
         content: {
           'application/json': {
-            schema: {
-              type: 'array',
-              items: getModelSchemaRef(Food, {
-                title: 'NewFood',
-                exclude: [
-                  'classes',
-                  'createAt',
-                  'foodAllergies',
-                  'foodDiets',
-                  'foodIntolerances',
-                  'parent',
-                ],
-              }),
-            },
+            schema: getModelSchemaRef(Recipe, {
+              title: 'NewRecipe',
+              exclude: ['id', 'createAt'],
+              optional: [
+                'difficulty',
+                'duration',
+                'numberOfPeople',
+                'imageId',
+                'stages',
+                'type',
+              ],
+            }),
           },
         },
       },
@@ -402,41 +400,40 @@ export class IntegrationController {
     @requestBody({
       content: {
         'application/json': {
-          schema: {
-            type: 'array',
-            items: getModelSchemaRef(Food, {
-              title: 'NewFood',
-              exclude: [
-                'id',
-                'classes',
-                'createAt',
-                'foodAllergies',
-                'foodDiets',
-                'foodIntolerances',
-                'parent',
-              ],
-            }),
-          },
+          schema: getModelSchemaRef(Recipe, {
+            title: 'NewRecipe',
+            exclude: ['id', 'createAt'],
+            optional: [
+              'difficulty',
+              'duration',
+              'numberOfPeople',
+              'imageId',
+              'stages',
+              'type',
+            ],
+          }),
         },
       },
     })
-    foods: Omit<Food, 'id'>[],
-  ): Promise<Food[]> {
+    recipe: Omit<Recipe, 'id'>,
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+  ): Promise<Recipe | null> {
     //TOOD save missing and get id
-    const res: Food[] = [];
-    for (const food of foods) {
-      let bddFood = await this.foodRepository.findOne({
-        where: {name: food.name},
-      });
-      if (bddFood === null) {
-        //n'existe pas
-        //donc création
-        bddFood = await this.foodRepository.create(food);
+    let bddRecipe = await this.recipeRepository.findOne({
+      where: {name: recipe.name},
+    });
+    if (bddRecipe === null) {
+      //n'existe pas
+      //donc création
+      //check for diet
+      if (recipe.dietId === undefined) {
+        throw new NotFound(531, "Properties 'dietId' must be defined");
       }
-
-      //récupération de l'id
-      res.push(new Food({id: bddFood.id, name: bddFood.name}));
+      recipe.ownerUserId = currentUserProfile.id;
+      await this.dietRepository.findById(recipe.dietId);
+      bddRecipe = await this.recipeRepository.create(recipe);
     }
-    return res;
+    return bddRecipe;
   }
 }
