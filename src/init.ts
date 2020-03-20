@@ -32,6 +32,10 @@ export const InitBdd = async function(): Promise<any> {
       id: 'Admin',
       description: 'Compte avec le plus de droit',
     },
+    {
+      id: 'Integration',
+      description: "Compte qui peut utiliser les ws d'integration",
+    },
   ];
   for (const role of roleList) {
     const hasRole: Count = await roleRepository.count({
