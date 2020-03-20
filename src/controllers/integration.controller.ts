@@ -1,3 +1,7 @@
+import {DietRepository} from './../repositories/diet.repository';
+import {Diet} from './../models/diet.model';
+import {AllergyRepository} from './../repositories/allergy.repository';
+import {Allergy} from './../models/allergy.model';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authorize} from '@loopback/authorization';
 import {authenticate} from '@loopback/authentication';
@@ -16,6 +20,10 @@ export class IntegrationController {
   constructor(
     @repository(FoodRepository)
     public foodRepository: FoodRepository,
+    @repository(AllergyRepository)
+    public allergyRepository: AllergyRepository,
+    @repository(DietRepository)
+    public dietRepository: DietRepository,
   ) {}
 
   @post('/foods/integration/', {
@@ -70,7 +78,244 @@ export class IntegrationController {
     allowedRoles: ['Admin', 'Integration'],
     voters: [basicAuthorization],
   })
-  async create(
+  async createFoods(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Food, {
+              title: 'NewFood',
+              exclude: [
+                'id',
+                'classes',
+                'createAt',
+                'foodAllergies',
+                'foodDiets',
+                'foodIntolerances',
+                'parent',
+              ],
+            }),
+          },
+        },
+      },
+    })
+    foods: Omit<Food, 'id'>[],
+  ): Promise<Food[]> {
+    //TOOD save missing and get id
+    const res: Food[] = [];
+    for (const food of foods) {
+      let bddFood = await this.foodRepository.findOne({
+        where: {name: food.name},
+      });
+      if (bddFood === null) {
+        //n'existe pas
+        //donc création
+        bddFood = await this.foodRepository.create(food);
+      }
+
+      //récupération de l'id
+      res.push(new Food({id: bddFood.id, name: bddFood.name}));
+    }
+    return res;
+  }
+
+  @post('/allergies/integration/', {
+    security: OPERATION_SECURITY_SPEC,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Allergy, {
+              title: 'NewAllergies',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      '200': {
+        description: 'Ingredient model instance',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Allergy, {
+                title: 'NewAllergies',
+                exclude: ['createAt'],
+              }),
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin', 'Integration'],
+    voters: [basicAuthorization],
+  })
+  async createAllergies(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Allergy, {
+              title: 'NewAllergies',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    })
+    allergies: Omit<Allergy, 'id'>[],
+  ): Promise<Allergy[]> {
+    //TOOD save missing and get id
+    const res: Allergy[] = [];
+    for (const allergie of allergies) {
+      let bddAllergie = await this.allergyRepository.findOne({
+        where: {name: allergie.name},
+      });
+      if (bddAllergie === null) {
+        //n'existe pas
+        //donc création
+        bddAllergie = await this.allergyRepository.create(allergie);
+      }
+
+      //récupération de l'id
+      res.push(new Allergy({id: bddAllergie.id, name: bddAllergie.name}));
+    }
+    return res;
+  }
+
+  @post('/diets/integration/', {
+    security: OPERATION_SECURITY_SPEC,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Diet, {
+              title: 'NewDiets',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      '200': {
+        description: 'Ingredient model instance',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Diet, {
+                title: 'NewDiets',
+                exclude: ['createAt'],
+              }),
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin', 'Integration'],
+    voters: [basicAuthorization],
+  })
+  async createDiets(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Diet, {
+              title: 'NewDiets',
+              exclude: ['id', 'createAt'],
+            }),
+          },
+        },
+      },
+    })
+    diets: Omit<Diet, 'id'>[],
+  ): Promise<Diet[]> {
+    //TOOD save missing and get id
+    const res: Diet[] = [];
+    for (const diet of diets) {
+      let bddDiet = await this.dietRepository.findOne({
+        where: {name: diet.name},
+      });
+      if (bddDiet === null) {
+        //n'existe pas
+        //donc création
+        bddDiet = await this.dietRepository.create(diet);
+      }
+
+      //récupération de l'id
+      res.push(new Diet({id: bddDiet.id, name: bddDiet.name}));
+    }
+    return res;
+  }
+
+  @post('/recipes/integration/', {
+    security: OPERATION_SECURITY_SPEC,
+    deprecated: true,
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Food, {
+              title: 'NewFood',
+              exclude: [
+                'id',
+                'classes',
+                'createAt',
+                'foodAllergies',
+                'foodDiets',
+                'foodIntolerances',
+                'parent',
+              ],
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      '200': {
+        description: 'Ingredient model instance',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Food, {
+                title: 'NewFood',
+                exclude: [
+                  'classes',
+                  'createAt',
+                  'foodAllergies',
+                  'foodDiets',
+                  'foodIntolerances',
+                  'parent',
+                ],
+              }),
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['Admin', 'Integration'],
+    voters: [basicAuthorization],
+  })
+  async createRecipes(
     @requestBody({
       content: {
         'application/json': {
