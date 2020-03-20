@@ -67,7 +67,7 @@ export class IntegrationController {
   })
   @authenticate('jwt')
   @authorize({
-    allowedRoles: ['Integration'],
+    allowedRoles: ['admin', 'integration'],
     voters: [basicAuthorization],
   })
   async create(
