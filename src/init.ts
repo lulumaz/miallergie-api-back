@@ -10,7 +10,8 @@ import {Count} from '@loopback/repository';
 import {UserRole} from './models';
 //permet de remplir la base avec les données nécéssaire au foncitonnement de l'api
 
-const exec = async function() {
+export const InitBdd = async function(): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const mongoDsDataSource: MongoDsDataSource = new MongoDsDataSource();
 
   //repositories
@@ -64,7 +65,6 @@ const exec = async function() {
         username: unserAdmin.username,
       },
     });
-    console.log({user: user});
     if (!user) user = await userRepository.create(unserAdmin); //if user does't exist then create it
     //adding role to user
     const nUserRole: Partial<UserRole> = {
@@ -87,12 +87,10 @@ const exec = async function() {
   } catch (error) {
     console.error('error role create ', error);
   }
-
-  process.exit(); //fin du script
 };
 
-try {
+/* try {
   exec();
 } catch (error) {
   console.log('error global ', error);
-}
+} */
