@@ -126,8 +126,16 @@ export class RecipeController {
     @param.query.object('filter', getFilterSchemaFor(Recipe))
     filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
+    let strictObjectIDCoercion = true;
+    //hotfix
+    if (
+      filter?.include &&
+      filter.include[0] &&
+      filter.include[0].relation === 'image'
+    )
+      strictObjectIDCoercion = false;
     return this.recipeRepository.find(filter, {
-      strictObjectIDCoercion: true,
+      strictObjectIDCoercion: strictObjectIDCoercion,
     });
   }
 
