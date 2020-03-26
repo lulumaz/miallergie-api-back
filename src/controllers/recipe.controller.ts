@@ -125,7 +125,9 @@ export class RecipeController {
     @param.query.object('filter', getFilterSchemaFor(Recipe))
     filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
-    return this.recipeRepository.find(filter);
+    return this.recipeRepository.find(filter, {
+      strictObjectIDCoercion: true,
+    });
   }
 
   @patch('/recipes', {
