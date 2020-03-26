@@ -1,22 +1,15 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  FoodAllergy,
-  Food,
-} from '../models';
+import {authenticate} from '@loopback/authentication';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {FoodAllergy, Food} from '../models';
 import {FoodAllergyRepository} from '../repositories';
 
+@authenticate('jwt')
 export class FoodAllergyFoodController {
   constructor(
     @repository(FoodAllergyRepository)
     public foodAllergyRepository: FoodAllergyRepository,
-  ) { }
+  ) {}
 
   @get('/food-allergies/{id}/food', {
     responses: {

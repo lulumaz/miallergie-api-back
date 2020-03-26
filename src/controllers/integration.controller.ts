@@ -1,4 +1,3 @@
-import {NotFound} from './../utils/error';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {Recipe} from './../models/recipe.model';
@@ -22,7 +21,11 @@ import {post, requestBody} from '@loopback/rest';
 import {basicAuthorization} from '../services/authorizor';
 
 // import {inject} from '@loopback/context';
-
+@authenticate('jwt')
+@authorize({
+  allowedRoles: ['Admin', 'Integration'],
+  voters: [basicAuthorization],
+})
 export class IntegrationController {
   constructor(
     @repository(FoodRepository)
@@ -83,11 +86,6 @@ export class IntegrationController {
         },
       },
     },
-  })
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['Admin', 'Integration'],
-    voters: [basicAuthorization],
   })
   async createFoods(
     @requestBody({
@@ -163,11 +161,6 @@ export class IntegrationController {
       },
     },
   })
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['Admin', 'Integration'],
-    voters: [basicAuthorization],
-  })
   async createAllergies(
     @requestBody({
       content: {
@@ -234,11 +227,6 @@ export class IntegrationController {
       },
     },
   })
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['Admin', 'Integration'],
-    voters: [basicAuthorization],
-  })
   async createDiets(
     @requestBody({
       content: {
@@ -304,11 +292,6 @@ export class IntegrationController {
         },
       },
     },
-  })
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['Admin', 'Integration'],
-    voters: [basicAuthorization],
   })
   async createIntolerance(
     @requestBody({
@@ -390,11 +373,6 @@ export class IntegrationController {
         },
       },
     },
-  })
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['Admin', 'Integration'],
-    voters: [basicAuthorization],
   })
   async createRecipes(
     @requestBody({

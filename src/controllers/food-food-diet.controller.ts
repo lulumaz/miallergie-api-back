@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,14 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Food,
-  FoodDiet,
-} from '../models';
+import {Food, FoodDiet} from '../models';
 import {FoodRepository} from '../repositories';
 
+@authenticate('jwt')
 export class FoodFoodDietController {
   constructor(
     @repository(FoodRepository) protected foodRepository: FoodRepository,
-  ) { }
+  ) {}
 
   @get('/foods/{id}/food-diets', {
     responses: {
@@ -61,11 +60,12 @@ export class FoodFoodDietController {
           schema: getModelSchemaRef(FoodDiet, {
             title: 'NewFoodDietInFood',
             exclude: ['id'],
-            optional: ['foodId']
+            optional: ['foodId'],
           }),
         },
       },
-    }) foodDiet: Omit<FoodDiet, 'id'>,
+    })
+    foodDiet: Omit<FoodDiet, 'id'>,
   ): Promise<FoodDiet> {
     return this.foodRepository.foodDiets(id).create(foodDiet);
   }
@@ -88,7 +88,8 @@ export class FoodFoodDietController {
       },
     })
     foodDiet: Partial<FoodDiet>,
-    @param.query.object('where', getWhereSchemaFor(FoodDiet)) where?: Where<FoodDiet>,
+    @param.query.object('where', getWhereSchemaFor(FoodDiet))
+    where?: Where<FoodDiet>,
   ): Promise<Count> {
     return this.foodRepository.foodDiets(id).patch(foodDiet, where);
   }
@@ -103,7 +104,8 @@ export class FoodFoodDietController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FoodDiet)) where?: Where<FoodDiet>,
+    @param.query.object('where', getWhereSchemaFor(FoodDiet))
+    where?: Where<FoodDiet>,
   ): Promise<Count> {
     return this.foodRepository.foodDiets(id).delete(where);
   }

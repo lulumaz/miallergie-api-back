@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -20,10 +21,11 @@ import {
 import {Ingredient} from '../models';
 import {IngredientRepository} from '../repositories';
 
+@authenticate('jwt')
 export class IngredientController {
   constructor(
     @repository(IngredientRepository)
-    public ingredientRepository : IngredientRepository,
+    public ingredientRepository: IngredientRepository,
   ) {}
 
   @post('/ingredients', {
@@ -59,7 +61,8 @@ export class IngredientController {
     },
   })
   async count(
-    @param.query.object('where', getWhereSchemaFor(Ingredient)) where?: Where<Ingredient>,
+    @param.query.object('where', getWhereSchemaFor(Ingredient))
+    where?: Where<Ingredient>,
   ): Promise<Count> {
     return this.ingredientRepository.count(where);
   }
@@ -80,7 +83,8 @@ export class IngredientController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Ingredient)) filter?: Filter<Ingredient>,
+    @param.query.object('filter', getFilterSchemaFor(Ingredient))
+    filter?: Filter<Ingredient>,
   ): Promise<Ingredient[]> {
     return this.ingredientRepository.find(filter);
   }
@@ -102,7 +106,8 @@ export class IngredientController {
       },
     })
     ingredient: Ingredient,
-    @param.query.object('where', getWhereSchemaFor(Ingredient)) where?: Where<Ingredient>,
+    @param.query.object('where', getWhereSchemaFor(Ingredient))
+    where?: Where<Ingredient>,
   ): Promise<Count> {
     return this.ingredientRepository.updateAll(ingredient, where);
   }
@@ -121,7 +126,8 @@ export class IngredientController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.query.object('filter', getFilterSchemaFor(Ingredient)) filter?: Filter<Ingredient>
+    @param.query.object('filter', getFilterSchemaFor(Ingredient))
+    filter?: Filter<Ingredient>,
   ): Promise<Ingredient> {
     return this.ingredientRepository.findById(id, filter);
   }

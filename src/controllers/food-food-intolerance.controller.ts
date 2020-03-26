@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,13 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Food,
-  FoodIntolerance,
-} from '../models';
+import {Food, FoodIntolerance} from '../models';
 import {FoodRepository} from '../repositories';
-
+@authenticate('jwt')
 export class FoodFoodIntoleranceController {
   constructor(
     @repository(FoodRepository) protected foodRepository: FoodRepository,
-  ) { }
+  ) {}
 
   @get('/foods/{id}/food-intolerances', {
     responses: {
@@ -49,7 +47,9 @@ export class FoodFoodIntoleranceController {
     responses: {
       '200': {
         description: 'Food model instance',
-        content: {'application/json': {schema: getModelSchemaRef(FoodIntolerance)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(FoodIntolerance)},
+        },
       },
     },
   })
@@ -61,11 +61,12 @@ export class FoodFoodIntoleranceController {
           schema: getModelSchemaRef(FoodIntolerance, {
             title: 'NewFoodIntoleranceInFood',
             exclude: ['id'],
-            optional: ['foodId']
+            optional: ['foodId'],
           }),
         },
       },
-    }) foodIntolerance: Omit<FoodIntolerance, 'id'>,
+    })
+    foodIntolerance: Omit<FoodIntolerance, 'id'>,
   ): Promise<FoodIntolerance> {
     return this.foodRepository.foodIntolerances(id).create(foodIntolerance);
   }
@@ -88,9 +89,12 @@ export class FoodFoodIntoleranceController {
       },
     })
     foodIntolerance: Partial<FoodIntolerance>,
-    @param.query.object('where', getWhereSchemaFor(FoodIntolerance)) where?: Where<FoodIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FoodIntolerance))
+    where?: Where<FoodIntolerance>,
   ): Promise<Count> {
-    return this.foodRepository.foodIntolerances(id).patch(foodIntolerance, where);
+    return this.foodRepository
+      .foodIntolerances(id)
+      .patch(foodIntolerance, where);
   }
 
   @del('/foods/{id}/food-intolerances', {
@@ -103,7 +107,8 @@ export class FoodFoodIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FoodIntolerance)) where?: Where<FoodIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FoodIntolerance))
+    where?: Where<FoodIntolerance>,
   ): Promise<Count> {
     return this.foodRepository.foodIntolerances(id).delete(where);
   }

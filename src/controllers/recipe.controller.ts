@@ -32,6 +32,7 @@ import {Recipe} from '../models';
 import {RecipeRepository} from '../repositories';
 import {basicAuthorization} from '../services/authorizor';
 
+@authenticate('jwt')
 export class RecipeController {
   constructor(
     @repository(RecipeRepository)

@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {
   Count,
@@ -21,6 +22,7 @@ import {
 import {UserRole} from '../models';
 import {UserRoleRepository} from '../repositories';
 
+@authenticate('jwt')
 export class UserRoleController {
   constructor(
     @repository(UserRoleRepository)

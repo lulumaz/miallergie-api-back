@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -20,6 +21,7 @@ import {
 import {Intolerance} from '../models';
 import {IntoleranceRepository} from '../repositories';
 
+@authenticate('jwt')
 export class IntoleranceController {
   constructor(
     @repository(IntoleranceRepository)

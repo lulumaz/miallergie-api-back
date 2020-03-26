@@ -1,8 +1,10 @@
+import {authenticate} from '@loopback/authentication';
 import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {Recipe, User} from '../models';
 import {RecipeRepository} from '../repositories';
 
+@authenticate('jwt')
 export class RecipeUserController {
   constructor(
     @repository(RecipeRepository)

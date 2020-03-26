@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {FileRepository} from './../repositories/file.repository';
 import {File} from './../models/file.model';
 import {Recipe} from './../models/recipe.model';
@@ -39,7 +40,7 @@ const configMulter = {
     fileSize: 1024 * 1024 * 20,
   },
 };
-
+@authenticate('jwt')
 export class RecipeImageController {
   constructor(
     @repository(RecipeRepository)

@@ -1,22 +1,15 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  RecipeDiet,
-  Diet,
-} from '../models';
+import {authenticate} from '@loopback/authentication';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {RecipeDiet, Diet} from '../models';
 import {RecipeDietRepository} from '../repositories';
 
+@authenticate('jwt')
 export class RecipeDietDietController {
   constructor(
     @repository(RecipeDietRepository)
     public recipeDietRepository: RecipeDietRepository,
-  ) { }
+  ) {}
 
   @get('/recipe-diets/{id}/diet', {
     responses: {

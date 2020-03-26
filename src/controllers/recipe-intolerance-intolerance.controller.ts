@@ -1,22 +1,15 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  RecipeIntolerance,
-  Intolerance,
-} from '../models';
+import {authenticate} from '@loopback/authentication';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {RecipeIntolerance, Intolerance} from '../models';
 import {RecipeIntoleranceRepository} from '../repositories';
 
+@authenticate('jwt')
 export class RecipeIntoleranceIntoleranceController {
   constructor(
     @repository(RecipeIntoleranceRepository)
     public recipeIntoleranceRepository: RecipeIntoleranceRepository,
-  ) { }
+  ) {}
 
   @get('/recipe-intolerances/{id}/intolerance', {
     responses: {

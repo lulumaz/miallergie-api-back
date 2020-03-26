@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,13 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Food,
-  FoodAllergy,
-} from '../models';
+import {Food, FoodAllergy} from '../models';
 import {FoodRepository} from '../repositories';
-
+@authenticate('jwt')
 export class FoodFoodAllergyController {
   constructor(
     @repository(FoodRepository) protected foodRepository: FoodRepository,
-  ) { }
+  ) {}
 
   @get('/foods/{id}/food-allergies', {
     responses: {
@@ -61,11 +59,12 @@ export class FoodFoodAllergyController {
           schema: getModelSchemaRef(FoodAllergy, {
             title: 'NewFoodAllergyInFood',
             exclude: ['id'],
-            optional: ['foodId']
+            optional: ['foodId'],
           }),
         },
       },
-    }) foodAllergy: Omit<FoodAllergy, 'id'>,
+    })
+    foodAllergy: Omit<FoodAllergy, 'id'>,
   ): Promise<FoodAllergy> {
     return this.foodRepository.foodAllergies(id).create(foodAllergy);
   }
@@ -88,7 +87,8 @@ export class FoodFoodAllergyController {
       },
     })
     foodAllergy: Partial<FoodAllergy>,
-    @param.query.object('where', getWhereSchemaFor(FoodAllergy)) where?: Where<FoodAllergy>,
+    @param.query.object('where', getWhereSchemaFor(FoodAllergy))
+    where?: Where<FoodAllergy>,
   ): Promise<Count> {
     return this.foodRepository.foodAllergies(id).patch(foodAllergy, where);
   }
@@ -103,7 +103,8 @@ export class FoodFoodAllergyController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FoodAllergy)) where?: Where<FoodAllergy>,
+    @param.query.object('where', getWhereSchemaFor(FoodAllergy))
+    where?: Where<FoodAllergy>,
   ): Promise<Count> {
     return this.foodRepository.foodAllergies(id).delete(where);
   }

@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -15,16 +16,14 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Recipe,
-  RecipeIntolerance,
-} from '../models';
+import {Recipe, RecipeIntolerance} from '../models';
 import {RecipeRepository} from '../repositories';
 
+@authenticate('jwt')
 export class RecipeRecipeIntoleranceController {
   constructor(
     @repository(RecipeRepository) protected recipeRepository: RecipeRepository,
-  ) { }
+  ) {}
 
   @get('/recipes/{id}/recipe-intolerances', {
     responses: {
@@ -32,7 +31,10 @@ export class RecipeRecipeIntoleranceController {
         description: 'Array of Recipe has many RecipeIntolerance',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(RecipeIntolerance)},
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(RecipeIntolerance),
+            },
           },
         },
       },
@@ -49,7 +51,9 @@ export class RecipeRecipeIntoleranceController {
     responses: {
       '200': {
         description: 'Recipe model instance',
-        content: {'application/json': {schema: getModelSchemaRef(RecipeIntolerance)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(RecipeIntolerance)},
+        },
       },
     },
   })
@@ -61,13 +65,16 @@ export class RecipeRecipeIntoleranceController {
           schema: getModelSchemaRef(RecipeIntolerance, {
             title: 'NewRecipeIntoleranceInRecipe',
             exclude: ['id'],
-            optional: ['recipeId']
+            optional: ['recipeId'],
           }),
         },
       },
-    }) recipeIntolerance: Omit<RecipeIntolerance, 'id'>,
+    })
+    recipeIntolerance: Omit<RecipeIntolerance, 'id'>,
   ): Promise<RecipeIntolerance> {
-    return this.recipeRepository.recipeIntolerances(id).create(recipeIntolerance);
+    return this.recipeRepository
+      .recipeIntolerances(id)
+      .create(recipeIntolerance);
   }
 
   @patch('/recipes/{id}/recipe-intolerances', {
@@ -88,9 +95,12 @@ export class RecipeRecipeIntoleranceController {
       },
     })
     recipeIntolerance: Partial<RecipeIntolerance>,
-    @param.query.object('where', getWhereSchemaFor(RecipeIntolerance)) where?: Where<RecipeIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(RecipeIntolerance))
+    where?: Where<RecipeIntolerance>,
   ): Promise<Count> {
-    return this.recipeRepository.recipeIntolerances(id).patch(recipeIntolerance, where);
+    return this.recipeRepository
+      .recipeIntolerances(id)
+      .patch(recipeIntolerance, where);
   }
 
   @del('/recipes/{id}/recipe-intolerances', {
@@ -103,7 +113,8 @@ export class RecipeRecipeIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(RecipeIntolerance)) where?: Where<RecipeIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(RecipeIntolerance))
+    where?: Where<RecipeIntolerance>,
   ): Promise<Count> {
     return this.recipeRepository.recipeIntolerances(id).delete(where);
   }

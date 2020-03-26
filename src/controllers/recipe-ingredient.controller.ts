@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {IngredientRepository} from './../repositories/ingredient.repository';
 import {
   Count,
@@ -19,6 +20,7 @@ import {
 import {Recipe, Ingredient} from '../models';
 import {RecipeRepository} from '../repositories';
 
+@authenticate('jwt')
 export class RecipeIngredientController {
   constructor(
     @repository(RecipeRepository)
