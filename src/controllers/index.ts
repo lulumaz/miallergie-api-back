@@ -23,3 +23,5 @@ export * from './ingredient-food.controller';
 export * from './recipe-image.controller';
 export * from './recipe-user.controller';
 export * from './integration.controller';
+export * from './recipe-recipe-diet.controller';
+export * from './recipe-diet-diet.controller';

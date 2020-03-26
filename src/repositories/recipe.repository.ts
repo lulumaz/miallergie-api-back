@@ -13,8 +13,7 @@ import {
   RecipeIntolerance,
   Ingredient,
   File,
-  User,
-} from '../models';
+  User, RecipeDiet} from '../models';
 import {MongoDsDataSource} from '../datasources';
 import {inject, Getter} from '@loopback/core';
 import {DietRepository} from './diet.repository';
@@ -23,6 +22,7 @@ import {RecipeIntoleranceRepository} from './recipe-intolerance.repository';
 import {IngredientRepository} from './ingredient.repository';
 import {FileRepository} from './file.repository';
 import {UserRepository} from './user.repository';
+import {RecipeDietRepository} from './recipe-diet.repository';
 
 export class RecipeRepository extends DefaultCrudRepository<
   Recipe,
@@ -51,6 +51,8 @@ export class RecipeRepository extends DefaultCrudRepository<
     typeof Recipe.prototype.id
   >;
 
+  public readonly diets: HasManyRepositoryFactory<RecipeDiet, typeof Recipe.prototype.id>;
+
   constructor(
     @inject('datasources.mongoDS') dataSource: MongoDsDataSource,
     @repository.getter('RecipeAllergyRepository')
@@ -64,9 +66,11 @@ export class RecipeRepository extends DefaultCrudRepository<
     @repository.getter('FileRepository')
     protected fileRepositoryGetter: Getter<FileRepository>,
     @repository.getter('UserRepository')
-    protected userRepositoryGetter: Getter<UserRepository>,
+    protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('RecipeDietRepository') protected recipeDietRepositoryGetter: Getter<RecipeDietRepository>,
   ) {
     super(Recipe, dataSource);
+    this.diets = this.createHasManyRepositoryFactoryFor('diets', recipeDietRepositoryGetter,);
+    this.registerInclusionResolver('diets', this.diets.inclusionResolver);
     this.ownerUser = this.createBelongsToAccessorFor(
       'ownerUser',
       userRepositoryGetter,

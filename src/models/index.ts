@@ -15,3 +15,4 @@ export * from './food-allergy.model';
 export * from './food-intolerance.model';
 export * from './ingredient.model';
 export * from './file.model';
+export * from './recipe-diet.model';

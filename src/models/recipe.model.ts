@@ -12,6 +12,7 @@ import {RecipeIntolerance} from './recipe-intolerance.model';
 import {Ingredient} from './ingredient.model';
 import {File} from './file.model';
 import {User} from './user.model';
+import {RecipeDiet} from './recipe-diet.model';
 
 @model()
 export class Recipe extends Entity {
@@ -75,6 +76,9 @@ export class Recipe extends Entity {
 
   @belongsTo(() => User)
   ownerUserId: string;
+
+  @hasMany(() => RecipeDiet)
+  diets: RecipeDiet[];
 
   constructor(data?: Partial<Recipe>) {
     super(data);
