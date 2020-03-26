@@ -61,9 +61,6 @@ export class Recipe extends Entity {
   })
   createAt: string;
 
-  @belongsTo(() => Diet)
-  dietId: string;
-
   @hasMany(() => RecipeAllergy)
   recipeAllergies: RecipeAllergy[];
 

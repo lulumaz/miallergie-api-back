@@ -29,8 +29,6 @@ export class RecipeRepository extends DefaultCrudRepository<
   typeof Recipe.prototype.id,
   RecipeRelations
 > {
-  public readonly diet: BelongsToAccessor<Diet, typeof Recipe.prototype.id>;
-
   public readonly recipeAllergies: HasManyRepositoryFactory<
     RecipeAllergy,
     typeof Recipe.prototype.id
@@ -55,8 +53,6 @@ export class RecipeRepository extends DefaultCrudRepository<
 
   constructor(
     @inject('datasources.mongoDS') dataSource: MongoDsDataSource,
-    @repository.getter('DietRepository')
-    protected dietRepositoryGetter: Getter<DietRepository>,
     @repository.getter('RecipeAllergyRepository')
     protected recipeAllergyRepositoryGetter: Getter<RecipeAllergyRepository>,
     @repository.getter('RecipeIntoleranceRepository')
@@ -106,7 +102,5 @@ export class RecipeRepository extends DefaultCrudRepository<
       'recipeAllergies',
       this.recipeAllergies.inclusionResolver,
     );
-    this.diet = this.createBelongsToAccessorFor('diet', dietRepositoryGetter);
-    this.registerInclusionResolver('diet', this.diet.inclusionResolver);
   }
 }

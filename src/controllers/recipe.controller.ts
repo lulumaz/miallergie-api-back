@@ -83,11 +83,7 @@ export class RecipeController {
     currentUserProfile: UserProfile,
   ): Promise<Recipe> {
     //check for diet
-    if (recipe.dietId === undefined) {
-      throw new NotFound(531, "Properties 'dietId' must be defined");
-    }
     recipe.ownerUserId = currentUserProfile.id;
-    await this.dietRepository.findById(recipe.dietId);
     return this.recipeRepository.create(recipe);
   }
 

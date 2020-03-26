@@ -426,12 +426,7 @@ export class IntegrationController {
     if (bddRecipe === null) {
       //n'existe pas
       //donc création
-      //check for diet
-      if (recipe.dietId === undefined) {
-        throw new NotFound(531, "Properties 'dietId' must be defined");
-      }
       recipe.ownerUserId = currentUserProfile.id;
-      await this.dietRepository.findById(recipe.dietId);
       bddRecipe = await this.recipeRepository.create(recipe);
     }
     return bddRecipe;

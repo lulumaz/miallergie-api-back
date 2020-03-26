@@ -7,7 +7,6 @@ export * from './diet.controller';
 export * from './intolerance.controller';
 export * from './recipe.controller';
 export * from './food.controller';
-export * from './recipe-diet.controller';
 export * from './recipe-allergy-allergy.controller';
 export * from './recipe-intolerance-intolerance.controller';
 export * from './food-diet-food.controller';
