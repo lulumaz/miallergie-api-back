@@ -129,12 +129,9 @@ export class RecipeController {
     const strictObjectIDCoercion = true;
     //hotfix
     console.log({filter: filter});
-    const recipes: RecipeWithRelations[] = await this.recipeRepository.find(
-      filter,
-      {
-        strictObjectIDCoercion: strictObjectIDCoercion,
-      },
-    );
+    const recipes: Recipe[] = await this.recipeRepository.find(filter, {
+      strictObjectIDCoercion: strictObjectIDCoercion,
+    });
     if (
       filter?.include &&
       filter.include[0] &&
