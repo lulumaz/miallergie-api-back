@@ -126,17 +126,33 @@ export class RecipeController {
     @param.query.object('filter', getFilterSchemaFor(Recipe))
     filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
-    let strictObjectIDCoercion = true;
+    const strictObjectIDCoercion = true;
     //hotfix
+    console.log({filter: filter});
+    const recipes: RecipeWithRelations[] = await this.recipeRepository.find(
+      filter,
+      {
+        strictObjectIDCoercion: strictObjectIDCoercion,
+      },
+    );
     if (
       filter?.include &&
       filter.include[0] &&
       filter.include[0].relation === 'image'
-    )
-      strictObjectIDCoercion = false;
-    return this.recipeRepository.find(filter, {
-      strictObjectIDCoercion: strictObjectIDCoercion,
-    });
+    ) {
+      const res: Recipe[] = [];
+      for (const recipe of recipes) {
+        res.push(
+          await this.recipeRepository.findById(recipe.id, {
+            include: [{relation: 'image'}],
+          }),
+        );
+      }
+      console.log({res});
+      return res;
+    } else {
+      return recipes;
+    }
   }
 
   @patch('/recipes', {
