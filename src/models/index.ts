@@ -19,3 +19,7 @@ export * from './recipe-diet.model';
 export * from './user-allergy.model';
 export * from './user-diet.model';
 export * from './user-intolerance.model';
+export * from './friend.model';
+export * from './friend-allergy.model';
+export * from './friend-diet.model';
+export * from './friend-intolerance.model';
