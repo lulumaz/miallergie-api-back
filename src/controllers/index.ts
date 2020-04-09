@@ -37,3 +37,4 @@ export * from './friend-food-intolerance.controller';
 export * from './friend-allergy-allergy.controller';
 export * from './friend-diet-diet.controller';
 export * from './friend-intolerance-intolerance.controller';
+export * from './user-friend.controller';

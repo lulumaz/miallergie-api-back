@@ -27,6 +27,11 @@ export class Friend extends Entity {
   @hasMany(() => FoodIntolerance)
   intolerances: FoodIntolerance[];
 
+  @property({
+    type: 'string',
+  })
+  userId?: string;
+
   constructor(data?: Partial<Friend>) {
     super(data);
   }

@@ -2,6 +2,7 @@ import {Entity, model, property, hasMany} from '@loopback/repository';
 import {UserAllergy} from './user-allergy.model';
 import {UserDiet} from './user-diet.model';
 import {UserIntolerance} from './user-intolerance.model';
+import {Friend} from './friend.model';
 
 @model({
   settings: {
@@ -66,6 +67,9 @@ export class User extends Entity {
 
   @hasMany(() => UserIntolerance)
   intolerances: UserIntolerance[];
+
+  @hasMany(() => Friend)
+  nonRegisteredFriends: Friend[];
 
   constructor(data?: Partial<User>) {
     super(data);
