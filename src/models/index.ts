@@ -16,3 +16,6 @@ export * from './food-intolerance.model';
 export * from './ingredient.model';
 export * from './file.model';
 export * from './recipe-diet.model';
+export * from './user-allergy.model';
+export * from './user-diet.model';
+export * from './user-intolerance.model';

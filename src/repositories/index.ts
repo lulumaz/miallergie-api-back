@@ -38,3 +38,6 @@ export * from './recipe-intolerance.repository';
 export * from './ingredient.repository';
 export * from './file.repository';
 export * from './recipe-diet.repository';
+export * from './user-allergy.repository';
+export * from './user-diet.repository';
+export * from './user-intolerance.repository';

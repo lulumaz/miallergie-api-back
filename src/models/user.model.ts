@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {UserAllergy} from './user-allergy.model';
+import {UserDiet} from './user-diet.model';
+import {UserIntolerance} from './user-intolerance.model';
 
 @model({
   settings: {
@@ -54,6 +57,15 @@ export class User extends Entity {
     default: () => new Date(),
   })
   createAt: string;
+
+  @hasMany(() => UserAllergy)
+  allergies: UserAllergy[];
+
+  @hasMany(() => UserDiet)
+  diets: UserDiet[];
+
+  @hasMany(() => UserIntolerance)
+  intolerances: UserIntolerance[];
 
   constructor(data?: Partial<User>) {
     super(data);

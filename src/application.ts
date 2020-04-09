@@ -1,4 +1,4 @@
-import {InitBdd} from './init';
+//import {InitBdd} from './init';
 import {MyUserService} from './services/user-service';
 import {BcryptHasher} from './services/hash';
 import {JWTService} from './services/jwt-service';
@@ -93,9 +93,10 @@ export class MiallergieApiBackApplication extends BootMixin(
       },
     };
 
-    InitBdd()
+    //must be fix
+    /* InitBdd()
       .then(() => console.log('Bdd inited'))
-      .catch(err => console.error(err));
+      .catch(err => console.error(err)); */
   }
 
   setUpBindings(): void {

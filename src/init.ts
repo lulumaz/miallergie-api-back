@@ -1,4 +1,4 @@
-import {BcryptHasher} from './services/hash';
+/* import {BcryptHasher} from './services/hash';
 import {UserRoleRelations} from './models/user/user-role.model';
 import {User, UserRelations} from './models/user.model';
 import {UserRoleRepository} from './repositories/user-role.repository';
@@ -7,11 +7,11 @@ import {RoleRepository} from './repositories/role.repository';
 import {UserRepository} from './repositories/user.repository';
 import {MongoDsDataSource} from './datasources';
 import {Count} from '@loopback/repository';
-import {UserRole} from './models';
+import {UserRole} from './models'; */
 //permet de remplir la base avec les données nécéssaire au foncitonnement de l'api
 
 export const InitBdd = async function(): Promise<any> {
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  /* // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const mongoDsDataSource: MongoDsDataSource = new MongoDsDataSource();
 
   //repositories
@@ -90,7 +90,7 @@ export const InitBdd = async function(): Promise<any> {
     if (!userRole) await userRoleRepository.create(nUserRole); //if role is not link then link it
   } catch (error) {
     console.error('error role create ', error);
-  }
+  } */
 };
 
 /* try {
