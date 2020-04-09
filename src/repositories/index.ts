@@ -45,3 +45,4 @@ export * from './friend.repository';
 export * from './friend-allergy.repository';
 export * from './friend-diet.repository';
 export * from './friend-intolerance.repository';
+export * from './registered-friend.repository';

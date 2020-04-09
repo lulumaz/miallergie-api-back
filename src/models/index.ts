@@ -23,3 +23,4 @@ export * from './friend.model';
 export * from './friend-allergy.model';
 export * from './friend-diet.model';
 export * from './friend-intolerance.model';
+export * from './registered-friend.model';
