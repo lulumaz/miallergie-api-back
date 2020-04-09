@@ -50,24 +50,6 @@ export class User extends Entity {
   password: string;
 
   @property({
-    type: 'array',
-    itemType: 'string',
-  })
-  ids_allergie?: string[];
-
-  @property({
-    type: 'array',
-    itemType: 'string',
-  })
-  ids_intolerance?: string[];
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  id_diet?: string;
-
-  @property({
     type: 'date',
     default: () => new Date(),
   })
