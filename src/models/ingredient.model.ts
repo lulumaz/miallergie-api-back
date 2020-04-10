@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Food} from './food.model';
+import {Unit} from './unit.model';
 
 @model()
 export class Ingredient extends Entity {
@@ -18,17 +19,14 @@ export class Ingredient extends Entity {
 
   @property({
     type: 'string',
-    required: true,
-  })
-  unit: string;
-
-  @property({
-    type: 'string',
   })
   recipeId?: string;
 
   @belongsTo(() => Food)
   foodId: string;
+
+  @belongsTo(() => Unit, {name: 'unitRelation'})
+  unit: string;
 
   constructor(data?: Partial<Ingredient>) {
     super(data);
