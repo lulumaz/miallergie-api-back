@@ -103,7 +103,9 @@ export class RecipeRecipeDietController {
     @param.query.object('where', getWhereSchemaFor(RecipeDiet))
     where?: Where<RecipeDiet>,
   ): Promise<Count> {
-    return this.recipeRepository.diets(id).patch(recipeDiet, where);
+    return this.recipeRepository
+      .diets(id)
+      .patch(recipeDiet, where, {strictObjectIDCoercion: true});
   }
 
   @del('/recipes/{id}/recipe-diets', {
@@ -120,6 +122,8 @@ export class RecipeRecipeDietController {
     @param.query.object('where', getWhereSchemaFor(RecipeDiet))
     where?: Where<RecipeDiet>,
   ): Promise<Count> {
-    return this.recipeRepository.diets(id).delete(where);
+    return this.recipeRepository
+      .diets(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
