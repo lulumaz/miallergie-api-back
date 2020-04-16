@@ -188,6 +188,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async count(
     @param.query.object('where', getWhereSchemaFor(User))
     where?: Where<User>,
@@ -211,6 +212,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async find(
     @param.query.object('filter', getFilterSchemaFor(User))
     filter?: Filter<User>,
@@ -227,6 +229,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async updateAll(
     @requestBody({
       content: {
@@ -255,6 +258,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async findById(
     @param.path.string('id') id: string,
     @param.query.object('filter', getFilterSchemaFor(User))
@@ -271,6 +275,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async updateById(
     @param.path.string('id') id: string,
     @requestBody({
@@ -403,6 +408,7 @@ export class UserController {
       },
     },
   })
+  @authenticate('jwt')
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.userRepository.deleteById(id);
   }

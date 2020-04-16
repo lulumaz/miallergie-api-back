@@ -1,24 +1,19 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  RegisteredFriend,
-  User,
-} from '../models';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {RegisteredFriend, User} from '../models';
 import {RegisteredFriendRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class RegisteredFriendUserController {
   constructor(
     @repository(RegisteredFriendRepository)
     public registeredFriendRepository: RegisteredFriendRepository,
-  ) { }
+  ) {}
 
   @get('/registered-friends/{id}/user', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User belonging to RegisteredFriend',

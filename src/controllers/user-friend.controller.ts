@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  Friend,
-} from '../models';
+import {User, Friend} from '../models';
 import {UserRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class UserFriendController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many Friend',
@@ -46,6 +47,7 @@ export class UserFriendController {
   }
 
   @post('/users/{id}/friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -61,16 +63,18 @@ export class UserFriendController {
           schema: getModelSchemaRef(Friend, {
             title: 'NewFriendInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) friend: Omit<Friend, 'id'>,
+    })
+    friend: Omit<Friend, 'id'>,
   ): Promise<Friend> {
     return this.userRepository.nonRegisteredFriends(id).create(friend);
   }
 
   @patch('/users/{id}/friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.Friend PATCH success count',
@@ -88,12 +92,14 @@ export class UserFriendController {
       },
     })
     friend: Partial<Friend>,
-    @param.query.object('where', getWhereSchemaFor(Friend)) where?: Where<Friend>,
+    @param.query.object('where', getWhereSchemaFor(Friend))
+    where?: Where<Friend>,
   ): Promise<Count> {
     return this.userRepository.nonRegisteredFriends(id).patch(friend, where);
   }
 
   @del('/users/{id}/friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.Friend DELETE success count',
@@ -103,7 +109,8 @@ export class UserFriendController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Friend)) where?: Where<Friend>,
+    @param.query.object('where', getWhereSchemaFor(Friend))
+    where?: Where<Friend>,
   ): Promise<Count> {
     return this.userRepository.nonRegisteredFriends(id).delete(where);
   }

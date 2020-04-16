@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authenticate} from '@loopback/authentication';
 import {
   Count,
@@ -29,6 +30,7 @@ export class IngredientController {
   ) {}
 
   @post('/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Ingredient model instance',
@@ -53,6 +55,7 @@ export class IngredientController {
   }
 
   @get('/ingredients/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Ingredient model count',
@@ -68,6 +71,7 @@ export class IngredientController {
   }
 
   @get('/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Ingredient model instances',
@@ -90,6 +94,7 @@ export class IngredientController {
   }
 
   @patch('/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Ingredient PATCH success count',
@@ -113,6 +118,7 @@ export class IngredientController {
   }
 
   @get('/ingredients/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Ingredient model instance',
@@ -133,6 +139,7 @@ export class IngredientController {
   }
 
   @patch('/ingredients/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Ingredient PATCH success',
@@ -154,6 +161,7 @@ export class IngredientController {
   }
 
   @put('/ingredients/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Ingredient PUT success',
@@ -168,6 +176,7 @@ export class IngredientController {
   }
 
   @del('/ingredients/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Ingredient DELETE success',

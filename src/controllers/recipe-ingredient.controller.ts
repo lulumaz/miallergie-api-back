@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {Recipe, Ingredient} from '../models';
 import {RecipeRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeIngredientController {
@@ -30,6 +31,7 @@ export class RecipeIngredientController {
   ) {}
 
   @get('/recipes/{id}/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Recipe has many Ingredient',
@@ -61,6 +63,7 @@ export class RecipeIngredientController {
   }
 
   @post('/recipes/{id}/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model instance',
@@ -89,6 +92,7 @@ export class RecipeIngredientController {
   }
 
   @patch('/recipes/{id}/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.Ingredient PATCH success count',
@@ -113,6 +117,7 @@ export class RecipeIngredientController {
   }
 
   @del('/recipes/{id}/ingredients', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.Ingredient DELETE success count',

@@ -18,6 +18,7 @@ import {
 } from '@loopback/rest';
 import {Recipe, RecipeDiet} from '../models';
 import {RecipeRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeRecipeDietController {
@@ -26,6 +27,7 @@ export class RecipeRecipeDietController {
   ) {}
 
   @get('/recipes/{id}/recipe-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Recipe has many RecipeDiet',
@@ -54,6 +56,7 @@ export class RecipeRecipeDietController {
   }
 
   @post('/recipes/{id}/recipe-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model instance',
@@ -79,6 +82,7 @@ export class RecipeRecipeDietController {
   }
 
   @patch('/recipes/{id}/recipe-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.RecipeDiet PATCH success count',
@@ -103,6 +107,7 @@ export class RecipeRecipeDietController {
   }
 
   @del('/recipes/{id}/recipe-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.RecipeDiet DELETE success count',

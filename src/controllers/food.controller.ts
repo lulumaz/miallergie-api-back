@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authenticate} from '@loopback/authentication';
 import {
   Count,
@@ -29,6 +30,7 @@ export class FoodController {
   ) {}
 
   @post('/foods', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food model instance',
@@ -53,6 +55,7 @@ export class FoodController {
   }
 
   @get('/foods/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food model count',
@@ -67,6 +70,7 @@ export class FoodController {
   }
 
   @get('/foods', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Food model instances',
@@ -89,6 +93,7 @@ export class FoodController {
   }
 
   @patch('/foods', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food PATCH success count',
@@ -111,6 +116,7 @@ export class FoodController {
   }
 
   @get('/foods/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food model instance',
@@ -131,6 +137,7 @@ export class FoodController {
   }
 
   @patch('/foods/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Food PATCH success',
@@ -152,6 +159,7 @@ export class FoodController {
   }
 
   @put('/foods/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Food PUT success',
@@ -166,6 +174,7 @@ export class FoodController {
   }
 
   @del('/foods/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Food DELETE success',

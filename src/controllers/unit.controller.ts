@@ -10,9 +10,7 @@ import {
   post,
   param,
   get,
-  getFilterSchemaFor,
   getModelSchemaRef,
-  getWhereSchemaFor,
   patch,
   put,
   del,
@@ -20,14 +18,18 @@ import {
 } from '@loopback/rest';
 import {Unit} from '../models';
 import {UnitRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class UnitController {
   constructor(
     @repository(UnitRepository)
-    public unitRepository : UnitRepository,
+    public unitRepository: UnitRepository,
   ) {}
 
   @post('/units', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Unit model instance',
@@ -41,7 +43,6 @@ export class UnitController {
         'application/json': {
           schema: getModelSchemaRef(Unit, {
             title: 'NewUnit',
-            
           }),
         },
       },
@@ -52,6 +53,7 @@ export class UnitController {
   }
 
   @get('/units/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Unit model count',
@@ -59,13 +61,12 @@ export class UnitController {
       },
     },
   })
-  async count(
-    @param.where(Unit) where?: Where<Unit>,
-  ): Promise<Count> {
+  async count(@param.where(Unit) where?: Where<Unit>): Promise<Count> {
     return this.unitRepository.count(where);
   }
 
   @get('/units', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Unit model instances',
@@ -80,13 +81,12 @@ export class UnitController {
       },
     },
   })
-  async find(
-    @param.filter(Unit) filter?: Filter<Unit>,
-  ): Promise<Unit[]> {
+  async find(@param.filter(Unit) filter?: Filter<Unit>): Promise<Unit[]> {
     return this.unitRepository.find(filter);
   }
 
   @patch('/units', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Unit PATCH success count',
@@ -109,6 +109,7 @@ export class UnitController {
   }
 
   @get('/units/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Unit model instance',
@@ -122,12 +123,13 @@ export class UnitController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Unit, {exclude: 'where'}) filter?: FilterExcludingWhere<Unit>
+    @param.filter(Unit, {exclude: 'where'}) filter?: FilterExcludingWhere<Unit>,
   ): Promise<Unit> {
     return this.unitRepository.findById(id, filter);
   }
 
   @patch('/units/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Unit PATCH success',
@@ -149,6 +151,7 @@ export class UnitController {
   }
 
   @put('/units/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Unit PUT success',
@@ -163,6 +166,7 @@ export class UnitController {
   }
 
   @del('/units/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Unit DELETE success',

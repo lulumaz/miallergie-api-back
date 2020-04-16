@@ -3,6 +3,7 @@ import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {FoodDiet, Food} from '../models';
 import {FoodDietRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 @authenticate('jwt')
 export class FoodDietFoodController {
   constructor(
@@ -11,6 +12,7 @@ export class FoodDietFoodController {
   ) {}
 
   @get('/food-diets/{id}/food', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food belonging to FoodDiet',

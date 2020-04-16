@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  RegisteredFriend,
-} from '../models';
+import {User, RegisteredFriend} from '../models';
 import {UserRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
+@authenticate('jwt')
 export class UserRegisteredFriendController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many RegisteredFriend',
@@ -46,10 +47,13 @@ export class UserRegisteredFriendController {
   }
 
   @post('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: getModelSchemaRef(RegisteredFriend)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(RegisteredFriend)},
+        },
       },
     },
   })
@@ -61,16 +65,18 @@ export class UserRegisteredFriendController {
           schema: getModelSchemaRef(RegisteredFriend, {
             title: 'NewRegisteredFriendInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) registeredFriend: Omit<RegisteredFriend, 'id'>,
+    })
+    registeredFriend: Omit<RegisteredFriend, 'id'>,
   ): Promise<RegisteredFriend> {
     return this.userRepository.registeredFriends(id).create(registeredFriend);
   }
 
   @patch('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.RegisteredFriend PATCH success count',
@@ -88,12 +94,16 @@ export class UserRegisteredFriendController {
       },
     })
     registeredFriend: Partial<RegisteredFriend>,
-    @param.query.object('where', getWhereSchemaFor(RegisteredFriend)) where?: Where<RegisteredFriend>,
+    @param.query.object('where', getWhereSchemaFor(RegisteredFriend))
+    where?: Where<RegisteredFriend>,
   ): Promise<Count> {
-    return this.userRepository.registeredFriends(id).patch(registeredFriend, where);
+    return this.userRepository
+      .registeredFriends(id)
+      .patch(registeredFriend, where);
   }
 
   @del('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.RegisteredFriend DELETE success count',
@@ -103,7 +113,8 @@ export class UserRegisteredFriendController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(RegisteredFriend)) where?: Where<RegisteredFriend>,
+    @param.query.object('where', getWhereSchemaFor(RegisteredFriend))
+    where?: Where<RegisteredFriend>,
   ): Promise<Count> {
     return this.userRepository.registeredFriends(id).delete(where);
   }

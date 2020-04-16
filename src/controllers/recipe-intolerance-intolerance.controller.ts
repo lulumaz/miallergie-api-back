@@ -3,6 +3,7 @@ import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {RecipeIntolerance, Intolerance} from '../models';
 import {RecipeIntoleranceRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeIntoleranceIntoleranceController {
@@ -12,6 +13,7 @@ export class RecipeIntoleranceIntoleranceController {
   ) {}
 
   @get('/recipe-intolerances/{id}/intolerance', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance belonging to RecipeIntolerance',

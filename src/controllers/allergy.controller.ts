@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -19,7 +20,8 @@ import {
 } from '@loopback/rest';
 import {Allergy} from '../models';
 import {AllergyRepository} from '../repositories';
-
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+@authenticate('jwt')
 export class AllergyController {
   constructor(
     @repository(AllergyRepository)
@@ -27,6 +29,7 @@ export class AllergyController {
   ) {}
 
   @post('/allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Allergy model instance',
@@ -55,6 +58,7 @@ export class AllergyController {
   }
 
   @get('/allergies/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Allergy model count',
@@ -70,6 +74,7 @@ export class AllergyController {
   }
 
   @get('/allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Allergy model instances',
@@ -92,6 +97,7 @@ export class AllergyController {
   }
 
   @patch('/allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Allergy PATCH success count',
@@ -115,6 +121,7 @@ export class AllergyController {
   }
 
   @get('/allergies/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Allergy model instance',
@@ -135,6 +142,7 @@ export class AllergyController {
   }
 
   @patch('/allergies/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Allergy PATCH success',
@@ -156,6 +164,7 @@ export class AllergyController {
   }
 
   @put('/allergies/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Allergy PUT success',
@@ -170,6 +179,7 @@ export class AllergyController {
   }
 
   @del('/allergies/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Allergy DELETE success',

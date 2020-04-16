@@ -16,6 +16,7 @@ import {
   getModelSchemaRef,
 } from '@loopback/rest';
 import multer = require('multer');
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 const storage = multer.diskStorage({
   destination: function(_req, _file, cb) {
@@ -50,6 +51,7 @@ export class RecipeImageController {
   ) {}
 
   @get('/recipes/{id}/image', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'File belonging to Recipe',
@@ -67,7 +69,19 @@ export class RecipeImageController {
     return this.recipeRepository.image(id);
   }
 
-  @post('/recipes/{id}/uploadImage')
+  @post('/recipes/{id}/uploadImage', {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'File belonging to Recipe',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(File),
+          },
+        },
+      },
+    },
+  })
   async create(
     @param.path.string('id') id: string,
     @requestBody({

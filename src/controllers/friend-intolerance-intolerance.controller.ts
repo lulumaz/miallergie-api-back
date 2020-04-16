@@ -1,24 +1,19 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  FriendIntolerance,
-  Intolerance,
-} from '../models';
+import {repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
+import {FriendIntolerance, Intolerance} from '../models';
 import {FriendIntoleranceRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class FriendIntoleranceIntoleranceController {
   constructor(
     @repository(FriendIntoleranceRepository)
     public friendIntoleranceRepository: FriendIntoleranceRepository,
-  ) { }
+  ) {}
 
   @get('/friend-intolerances/{id}/intolerance', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance belonging to FriendIntolerance',

@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  UserAllergy,
-} from '../models';
+import {User, UserAllergy} from '../models';
 import {UserRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class UserUserAllergyController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/user-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many UserAllergy',
@@ -46,6 +47,7 @@ export class UserUserAllergyController {
   }
 
   @post('/users/{id}/user-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -61,16 +63,18 @@ export class UserUserAllergyController {
           schema: getModelSchemaRef(UserAllergy, {
             title: 'NewUserAllergyInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) userAllergy: Omit<UserAllergy, 'id'>,
+    })
+    userAllergy: Omit<UserAllergy, 'id'>,
   ): Promise<UserAllergy> {
     return this.userRepository.allergies(id).create(userAllergy);
   }
 
   @patch('/users/{id}/user-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserAllergy PATCH success count',
@@ -88,12 +92,14 @@ export class UserUserAllergyController {
       },
     })
     userAllergy: Partial<UserAllergy>,
-    @param.query.object('where', getWhereSchemaFor(UserAllergy)) where?: Where<UserAllergy>,
+    @param.query.object('where', getWhereSchemaFor(UserAllergy))
+    where?: Where<UserAllergy>,
   ): Promise<Count> {
     return this.userRepository.allergies(id).patch(userAllergy, where);
   }
 
   @del('/users/{id}/user-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserAllergy DELETE success count',
@@ -103,7 +109,8 @@ export class UserUserAllergyController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(UserAllergy)) where?: Where<UserAllergy>,
+    @param.query.object('where', getWhereSchemaFor(UserAllergy))
+    where?: Where<UserAllergy>,
   ): Promise<Count> {
     return this.userRepository.allergies(id).delete(where);
   }

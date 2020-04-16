@@ -1,3 +1,4 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authenticate} from '@loopback/authentication';
 import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
@@ -12,6 +13,7 @@ export class RecipeDietDietController {
   ) {}
 
   @get('/recipe-diets/{id}/diet', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Diet belonging to RecipeDiet',

@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  UserIntolerance,
-} from '../models';
+import {User, UserIntolerance} from '../models';
 import {UserRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class UserUserIntoleranceController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/user-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many UserIntolerance',
@@ -46,10 +47,13 @@ export class UserUserIntoleranceController {
   }
 
   @post('/users/{id}/user-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: getModelSchemaRef(UserIntolerance)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(UserIntolerance)},
+        },
       },
     },
   })
@@ -61,16 +65,18 @@ export class UserUserIntoleranceController {
           schema: getModelSchemaRef(UserIntolerance, {
             title: 'NewUserIntoleranceInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) userIntolerance: Omit<UserIntolerance, 'id'>,
+    })
+    userIntolerance: Omit<UserIntolerance, 'id'>,
   ): Promise<UserIntolerance> {
     return this.userRepository.intolerances(id).create(userIntolerance);
   }
 
   @patch('/users/{id}/user-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserIntolerance PATCH success count',
@@ -88,12 +94,14 @@ export class UserUserIntoleranceController {
       },
     })
     userIntolerance: Partial<UserIntolerance>,
-    @param.query.object('where', getWhereSchemaFor(UserIntolerance)) where?: Where<UserIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(UserIntolerance))
+    where?: Where<UserIntolerance>,
   ): Promise<Count> {
     return this.userRepository.intolerances(id).patch(userIntolerance, where);
   }
 
   @del('/users/{id}/user-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserIntolerance DELETE success count',
@@ -103,7 +111,8 @@ export class UserUserIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(UserIntolerance)) where?: Where<UserIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(UserIntolerance))
+    where?: Where<UserIntolerance>,
   ): Promise<Count> {
     return this.userRepository.intolerances(id).delete(where);
   }

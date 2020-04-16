@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Friend,
-  FriendAllergy,
-} from '../models';
+import {Friend, FriendAllergy} from '../models';
 import {FriendRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class FriendFriendAllergyController {
   constructor(
     @repository(FriendRepository) protected friendRepository: FriendRepository,
-  ) { }
+  ) {}
 
   @get('/friends/{id}/friend-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Friend has many FriendAllergy',
@@ -46,10 +47,13 @@ export class FriendFriendAllergyController {
   }
 
   @post('/friends/{id}/friend-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend model instance',
-        content: {'application/json': {schema: getModelSchemaRef(FriendAllergy)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(FriendAllergy)},
+        },
       },
     },
   })
@@ -61,16 +65,18 @@ export class FriendFriendAllergyController {
           schema: getModelSchemaRef(FriendAllergy, {
             title: 'NewFriendAllergyInFriend',
             exclude: ['id'],
-            optional: ['friendId']
+            optional: ['friendId'],
           }),
         },
       },
-    }) friendAllergy: Omit<FriendAllergy, 'id'>,
+    })
+    friendAllergy: Omit<FriendAllergy, 'id'>,
   ): Promise<FriendAllergy> {
     return this.friendRepository.allergies(id).create(friendAllergy);
   }
 
   @patch('/friends/{id}/friend-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend.FriendAllergy PATCH success count',
@@ -88,12 +94,14 @@ export class FriendFriendAllergyController {
       },
     })
     friendAllergy: Partial<FriendAllergy>,
-    @param.query.object('where', getWhereSchemaFor(FriendAllergy)) where?: Where<FriendAllergy>,
+    @param.query.object('where', getWhereSchemaFor(FriendAllergy))
+    where?: Where<FriendAllergy>,
   ): Promise<Count> {
     return this.friendRepository.allergies(id).patch(friendAllergy, where);
   }
 
   @del('/friends/{id}/friend-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend.FriendAllergy DELETE success count',
@@ -103,7 +111,8 @@ export class FriendFriendAllergyController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FriendAllergy)) where?: Where<FriendAllergy>,
+    @param.query.object('where', getWhereSchemaFor(FriendAllergy))
+    where?: Where<FriendAllergy>,
   ): Promise<Count> {
     return this.friendRepository.allergies(id).delete(where);
   }

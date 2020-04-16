@@ -20,6 +20,7 @@ import {
 } from '@loopback/rest';
 import {Intolerance} from '../models';
 import {IntoleranceRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class IntoleranceController {
@@ -29,6 +30,7 @@ export class IntoleranceController {
   ) {}
 
   @post('/intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance model instance',
@@ -53,6 +55,7 @@ export class IntoleranceController {
   }
 
   @get('/intolerances/count', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance model count',
@@ -68,6 +71,7 @@ export class IntoleranceController {
   }
 
   @get('/intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Intolerance model instances',
@@ -90,6 +94,7 @@ export class IntoleranceController {
   }
 
   @patch('/intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance PATCH success count',
@@ -113,6 +118,7 @@ export class IntoleranceController {
   }
 
   @get('/intolerances/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Intolerance model instance',
@@ -133,6 +139,7 @@ export class IntoleranceController {
   }
 
   @patch('/intolerances/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Intolerance PATCH success',
@@ -154,6 +161,7 @@ export class IntoleranceController {
   }
 
   @put('/intolerances/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Intolerance PUT success',
@@ -168,6 +176,7 @@ export class IntoleranceController {
   }
 
   @del('/intolerances/{id}', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
         description: 'Intolerance DELETE success',

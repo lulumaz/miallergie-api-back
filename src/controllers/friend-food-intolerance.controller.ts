@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Friend,
-  FoodIntolerance,
-} from '../models';
+import {Friend, FoodIntolerance} from '../models';
 import {FriendRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
+@authenticate('jwt')
 export class FriendFoodIntoleranceController {
   constructor(
     @repository(FriendRepository) protected friendRepository: FriendRepository,
-  ) { }
+  ) {}
 
   @get('/friends/{id}/food-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Friend has many FoodIntolerance',
@@ -46,10 +47,13 @@ export class FriendFoodIntoleranceController {
   }
 
   @post('/friends/{id}/food-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend model instance',
-        content: {'application/json': {schema: getModelSchemaRef(FoodIntolerance)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(FoodIntolerance)},
+        },
       },
     },
   })
@@ -61,16 +65,18 @@ export class FriendFoodIntoleranceController {
           schema: getModelSchemaRef(FoodIntolerance, {
             title: 'NewFoodIntoleranceInFriend',
             exclude: ['id'],
-            optional: ['friendId']
+            optional: ['friendId'],
           }),
         },
       },
-    }) foodIntolerance: Omit<FoodIntolerance, 'id'>,
+    })
+    foodIntolerance: Omit<FoodIntolerance, 'id'>,
   ): Promise<FoodIntolerance> {
     return this.friendRepository.intolerances(id).create(foodIntolerance);
   }
 
   @patch('/friends/{id}/food-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend.FoodIntolerance PATCH success count',
@@ -88,12 +94,14 @@ export class FriendFoodIntoleranceController {
       },
     })
     foodIntolerance: Partial<FoodIntolerance>,
-    @param.query.object('where', getWhereSchemaFor(FoodIntolerance)) where?: Where<FoodIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FoodIntolerance))
+    where?: Where<FoodIntolerance>,
   ): Promise<Count> {
     return this.friendRepository.intolerances(id).patch(foodIntolerance, where);
   }
 
   @del('/friends/{id}/food-intolerances', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Friend.FoodIntolerance DELETE success count',
@@ -103,7 +111,8 @@ export class FriendFoodIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FoodIntolerance)) where?: Where<FoodIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FoodIntolerance))
+    where?: Where<FoodIntolerance>,
   ): Promise<Count> {
     return this.friendRepository.intolerances(id).delete(where);
   }

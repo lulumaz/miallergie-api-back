@@ -18,6 +18,7 @@ import {
 } from '@loopback/rest';
 import {Recipe, RecipeAllergy} from '../models';
 import {RecipeRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeRecipeAllergyController {
@@ -26,6 +27,7 @@ export class RecipeRecipeAllergyController {
   ) {}
 
   @get('/recipes/{id}/recipe-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Recipe has many RecipeAllergy',
@@ -45,6 +47,7 @@ export class RecipeRecipeAllergyController {
   }
 
   @post('/recipes/{id}/recipe-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe model instance',
@@ -73,6 +76,7 @@ export class RecipeRecipeAllergyController {
   }
 
   @patch('/recipes/{id}/recipe-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.RecipeAllergy PATCH success count',
@@ -99,6 +103,7 @@ export class RecipeRecipeAllergyController {
   }
 
   @del('/recipes/{id}/recipe-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Recipe.RecipeAllergy DELETE success count',

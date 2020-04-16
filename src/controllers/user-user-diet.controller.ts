@@ -15,18 +15,19 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  UserDiet,
-} from '../models';
+import {User, UserDiet} from '../models';
 import {UserRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
+@authenticate('jwt')
 export class UserUserDietController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/user-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many UserDiet',
@@ -46,6 +47,7 @@ export class UserUserDietController {
   }
 
   @post('/users/{id}/user-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -61,16 +63,18 @@ export class UserUserDietController {
           schema: getModelSchemaRef(UserDiet, {
             title: 'NewUserDietInUser',
             exclude: ['id'],
-            optional: ['userId']
+            optional: ['userId'],
           }),
         },
       },
-    }) userDiet: Omit<UserDiet, 'id'>,
+    })
+    userDiet: Omit<UserDiet, 'id'>,
   ): Promise<UserDiet> {
     return this.userRepository.diets(id).create(userDiet);
   }
 
   @patch('/users/{id}/user-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserDiet PATCH success count',
@@ -88,12 +92,14 @@ export class UserUserDietController {
       },
     })
     userDiet: Partial<UserDiet>,
-    @param.query.object('where', getWhereSchemaFor(UserDiet)) where?: Where<UserDiet>,
+    @param.query.object('where', getWhereSchemaFor(UserDiet))
+    where?: Where<UserDiet>,
   ): Promise<Count> {
     return this.userRepository.diets(id).patch(userDiet, where);
   }
 
   @del('/users/{id}/user-diets', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.UserDiet DELETE success count',
@@ -103,7 +109,8 @@ export class UserUserDietController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(UserDiet)) where?: Where<UserDiet>,
+    @param.query.object('where', getWhereSchemaFor(UserDiet))
+    where?: Where<UserDiet>,
   ): Promise<Count> {
     return this.userRepository.diets(id).delete(where);
   }

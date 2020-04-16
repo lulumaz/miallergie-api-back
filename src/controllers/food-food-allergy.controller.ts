@@ -18,6 +18,7 @@ import {
 } from '@loopback/rest';
 import {Food, FoodAllergy} from '../models';
 import {FoodRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 @authenticate('jwt')
 export class FoodFoodAllergyController {
   constructor(
@@ -25,6 +26,7 @@ export class FoodFoodAllergyController {
   ) {}
 
   @get('/foods/{id}/food-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of Food has many FoodAllergy',
@@ -44,6 +46,7 @@ export class FoodFoodAllergyController {
   }
 
   @post('/foods/{id}/food-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food model instance',
@@ -70,6 +73,7 @@ export class FoodFoodAllergyController {
   }
 
   @patch('/foods/{id}/food-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food.FoodAllergy PATCH success count',
@@ -94,6 +98,7 @@ export class FoodFoodAllergyController {
   }
 
   @del('/foods/{id}/food-allergies', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Food.FoodAllergy DELETE success count',

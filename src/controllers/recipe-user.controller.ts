@@ -3,6 +3,7 @@ import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {Recipe, User} from '../models';
 import {RecipeRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeUserController {
@@ -12,6 +13,7 @@ export class RecipeUserController {
   ) {}
 
   @get('/recipes/{id}/user', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User belonging to Recipe',

@@ -3,6 +3,7 @@ import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {RecipeAllergy, Allergy} from '../models';
 import {RecipeAllergyRepository} from '../repositories';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
 @authenticate('jwt')
 export class RecipeAllergyAllergyController {
@@ -12,6 +13,7 @@ export class RecipeAllergyAllergyController {
   ) {}
 
   @get('/recipe-allergies/{id}/allergy', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Allergy belonging to RecipeAllergy',

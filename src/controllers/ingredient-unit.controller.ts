@@ -2,7 +2,10 @@ import {repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {Ingredient, Unit} from '../models';
 import {IngredientRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
+import {OPERATION_SECURITY_SPEC} from '../auth/security-spec';
 
+@authenticate('jwt')
 export class IngredientUnitController {
   constructor(
     @repository(IngredientRepository)
@@ -10,6 +13,7 @@ export class IngredientUnitController {
   ) {}
 
   @get('/ingredients/{id}/unit', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Unit belonging to Ingredient',
