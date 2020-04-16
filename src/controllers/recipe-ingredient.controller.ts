@@ -113,7 +113,9 @@ export class RecipeIngredientController {
     @param.query.object('where', getWhereSchemaFor(Ingredient))
     where?: Where<Ingredient>,
   ): Promise<Count> {
-    return this.recipeRepository.ingredients(id).patch(ingredient, where);
+    return this.recipeRepository
+      .ingredients(id)
+      .patch(ingredient, where, {strictObjectIDCoercion: true});
   }
 
   @del('/recipes/{id}/ingredients', {
@@ -130,6 +132,8 @@ export class RecipeIngredientController {
     @param.query.object('where', getWhereSchemaFor(Ingredient))
     where?: Where<Ingredient>,
   ): Promise<Count> {
-    return this.recipeRepository.ingredients(id).delete(where);
+    return this.recipeRepository
+      .ingredients(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
