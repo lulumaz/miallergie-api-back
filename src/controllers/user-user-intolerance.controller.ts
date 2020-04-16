@@ -43,7 +43,9 @@ export class UserUserIntoleranceController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<UserIntolerance>,
   ): Promise<UserIntolerance[]> {
-    return this.userRepository.intolerances(id).find(filter);
+    return this.userRepository
+      .intolerances(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/users/{id}/user-intolerances', {
@@ -97,7 +99,9 @@ export class UserUserIntoleranceController {
     @param.query.object('where', getWhereSchemaFor(UserIntolerance))
     where?: Where<UserIntolerance>,
   ): Promise<Count> {
-    return this.userRepository.intolerances(id).patch(userIntolerance, where);
+    return this.userRepository
+      .intolerances(id)
+      .patch(userIntolerance, where, {strictObjectIDCoercion: true});
   }
 
   @del('/users/{id}/user-intolerances', {
@@ -114,6 +118,8 @@ export class UserUserIntoleranceController {
     @param.query.object('where', getWhereSchemaFor(UserIntolerance))
     where?: Where<UserIntolerance>,
   ): Promise<Count> {
-    return this.userRepository.intolerances(id).delete(where);
+    return this.userRepository
+      .intolerances(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
