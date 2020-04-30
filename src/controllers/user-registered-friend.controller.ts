@@ -15,16 +15,13 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  RegisteredFriend,
-} from '../models';
+import {User, RegisteredFriend} from '../models';
 import {UserRepository} from '../repositories';
 
 export class UserRegisteredFriendController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
-  ) { }
+  ) {}
 
   @get('/users/{id}/registered-friends', {
     responses: {
@@ -42,14 +39,18 @@ export class UserRegisteredFriendController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<RegisteredFriend>,
   ): Promise<RegisteredFriend[]> {
-    return this.userRepository.registeredFriends(id).find(filter);
+    return this.userRepository.registeredFriends(id).find(filter, {
+      strictObjectIDCoercion: true,
+    });
   }
 
   @post('/users/{id}/registered-friends', {
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: getModelSchemaRef(RegisteredFriend)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(RegisteredFriend)},
+        },
       },
     },
   })
@@ -61,11 +62,12 @@ export class UserRegisteredFriendController {
           schema: getModelSchemaRef(RegisteredFriend, {
             title: 'NewRegisteredFriendInUser',
             exclude: ['id'],
-            optional: ['ownerUserId']
+            optional: ['ownerUserId'],
           }),
         },
       },
-    }) registeredFriend: Omit<RegisteredFriend, 'id'>,
+    })
+    registeredFriend: Omit<RegisteredFriend, 'id'>,
   ): Promise<RegisteredFriend> {
     return this.userRepository.registeredFriends(id).create(registeredFriend);
   }
@@ -88,9 +90,14 @@ export class UserRegisteredFriendController {
       },
     })
     registeredFriend: Partial<RegisteredFriend>,
-    @param.query.object('where', getWhereSchemaFor(RegisteredFriend)) where?: Where<RegisteredFriend>,
+    @param.query.object('where', getWhereSchemaFor(RegisteredFriend))
+    where?: Where<RegisteredFriend>,
   ): Promise<Count> {
-    return this.userRepository.registeredFriends(id).patch(registeredFriend, where);
+    return this.userRepository
+      .registeredFriends(id)
+      .patch(registeredFriend, where, {
+        strictObjectIDCoercion: true,
+      });
   }
 
   @del('/users/{id}/registered-friends', {
@@ -103,8 +110,11 @@ export class UserRegisteredFriendController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(RegisteredFriend)) where?: Where<RegisteredFriend>,
+    @param.query.object('where', getWhereSchemaFor(RegisteredFriend))
+    where?: Where<RegisteredFriend>,
   ): Promise<Count> {
-    return this.userRepository.registeredFriends(id).delete(where);
+    return this.userRepository.registeredFriends(id).delete(where, {
+      strictObjectIDCoercion: true,
+    });
   }
 }
