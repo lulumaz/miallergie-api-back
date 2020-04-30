@@ -3,6 +3,7 @@ import {UserAllergy} from './user-allergy.model';
 import {UserDiet} from './user-diet.model';
 import {UserIntolerance} from './user-intolerance.model';
 import {Friend} from './friend.model';
+import {RegisteredFriend} from './registered-friend.model';
 
 @model({
   settings: {
@@ -70,6 +71,9 @@ export class User extends Entity {
 
   @hasMany(() => Friend)
   nonRegisteredFriends: Friend[];
+
+  @hasMany(() => RegisteredFriend, {keyTo: 'ownerUserId'})
+  registeredFriends: RegisteredFriend[];
 
   constructor(data?: Partial<User>) {
     super(data);
