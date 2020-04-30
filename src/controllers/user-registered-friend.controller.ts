@@ -1,3 +1,5 @@
+import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -17,13 +19,14 @@ import {
 } from '@loopback/rest';
 import {User, RegisteredFriend} from '../models';
 import {UserRepository} from '../repositories';
-
+@authenticate('jwt')
 export class UserRegisteredFriendController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
   ) {}
 
   @get('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'Array of User has many RegisteredFriend',
@@ -45,6 +48,7 @@ export class UserRegisteredFriendController {
   }
 
   @post('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -73,6 +77,7 @@ export class UserRegisteredFriendController {
   }
 
   @patch('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.RegisteredFriend PATCH success count',
@@ -101,6 +106,7 @@ export class UserRegisteredFriendController {
   }
 
   @del('/users/{id}/registered-friends', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User.RegisteredFriend DELETE success count',
