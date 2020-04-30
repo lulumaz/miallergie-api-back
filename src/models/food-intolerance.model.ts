@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Food} from './food.model';
+import {Intolerance} from './intolerance.model';
 
 @model()
 export class FoodIntolerance extends Entity {
@@ -17,6 +18,9 @@ export class FoodIntolerance extends Entity {
     type: 'string',
   })
   friendId?: string;
+
+  @belongsTo(() => Intolerance)
+  intoleranceId: string;
 
   constructor(data?: Partial<FoodIntolerance>) {
     super(data);
