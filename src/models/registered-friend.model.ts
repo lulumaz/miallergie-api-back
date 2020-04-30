@@ -10,9 +10,6 @@ export class RegisteredFriend extends Entity {
   })
   id?: string;
 
-  @belongsTo(() => User)
-  userId: string;
-
   constructor(data?: Partial<RegisteredFriend>) {
     super(data);
   }
@@ -22,4 +19,5 @@ export interface RegisteredFriendRelations {
   // describe navigational properties here
 }
 
-export type RegisteredFriendWithRelations = RegisteredFriend & RegisteredFriendRelations;
+export type RegisteredFriendWithRelations = RegisteredFriend &
+  RegisteredFriendRelations;

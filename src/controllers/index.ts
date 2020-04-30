@@ -38,7 +38,5 @@ export * from './friend-allergy-allergy.controller';
 export * from './friend-diet-diet.controller';
 export * from './friend-intolerance-intolerance.controller';
 export * from './user-friend.controller';
-export * from './user-registered-friend.controller';
-export * from './registered-friend-user.controller';
 export * from './ingredient-unit.controller';
 export * from './unit.controller';
