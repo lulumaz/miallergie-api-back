@@ -43,7 +43,9 @@ export class FoodFoodDietController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<FoodDiet>,
   ): Promise<FoodDiet[]> {
-    return this.foodRepository.foodDiets(id).find(filter);
+    return this.foodRepository
+      .foodDiets(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/foods/{id}/food-diets', {
@@ -95,7 +97,9 @@ export class FoodFoodDietController {
     @param.query.object('where', getWhereSchemaFor(FoodDiet))
     where?: Where<FoodDiet>,
   ): Promise<Count> {
-    return this.foodRepository.foodDiets(id).patch(foodDiet, where);
+    return this.foodRepository
+      .foodDiets(id)
+      .patch(foodDiet, where, {strictObjectIDCoercion: true});
   }
 
   @del('/foods/{id}/food-diets', {
@@ -112,6 +116,8 @@ export class FoodFoodDietController {
     @param.query.object('where', getWhereSchemaFor(FoodDiet))
     where?: Where<FoodDiet>,
   ): Promise<Count> {
-    return this.foodRepository.foodDiets(id).delete(where);
+    return this.foodRepository
+      .foodDiets(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }

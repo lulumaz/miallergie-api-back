@@ -42,7 +42,9 @@ export class FoodFoodAllergyController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<FoodAllergy>,
   ): Promise<FoodAllergy[]> {
-    return this.foodRepository.foodAllergies(id).find(filter);
+    return this.foodRepository
+      .foodAllergies(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/foods/{id}/food-allergies', {
@@ -94,7 +96,9 @@ export class FoodFoodAllergyController {
     @param.query.object('where', getWhereSchemaFor(FoodAllergy))
     where?: Where<FoodAllergy>,
   ): Promise<Count> {
-    return this.foodRepository.foodAllergies(id).patch(foodAllergy, where);
+    return this.foodRepository
+      .foodAllergies(id)
+      .patch(foodAllergy, where, {strictObjectIDCoercion: true});
   }
 
   @del('/foods/{id}/food-allergies', {
@@ -111,6 +115,8 @@ export class FoodFoodAllergyController {
     @param.query.object('where', getWhereSchemaFor(FoodAllergy))
     where?: Where<FoodAllergy>,
   ): Promise<Count> {
-    return this.foodRepository.foodAllergies(id).delete(where);
+    return this.foodRepository
+      .foodAllergies(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
