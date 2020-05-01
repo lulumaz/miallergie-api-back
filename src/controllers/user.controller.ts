@@ -1,8 +1,10 @@
+import {UserDietWithRelations} from './../models/user-diet.model';
+import {Diet} from './../models/diet.model';
 import {NotFound} from './../utils/error';
 import {UserWithRole} from './../services/user-service';
 import {Credentials} from './../models/user.model';
 import {PasswordHasher} from './../services/hash';
-import {SecurityBindings, UserProfile} from '@loopback/security';
+import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import {
   TokenService,
   UserService,
@@ -15,6 +17,7 @@ import {
   Filter,
   repository,
   Where,
+  Inclusion,
 } from '@loopback/repository';
 import {
   post,
@@ -480,8 +483,64 @@ export class UserController {
   @authenticate('jwt')
   async printCurrentUser(
     @inject(SecurityBindings.USER)
-    currentUserProfile: UserProfile,
-  ): Promise<UserProfile> {
-    return currentUserProfile;
+    currentUserProfile: {
+      id: string;
+      name: string;
+      roles: string[];
+    },
+  ): Promise<any> {
+    const user = await this.userRepository.findById(currentUserProfile.id);
+    user.diets = await this.userRepository.diets(user.id).find(
+      {
+        fields: {
+          dietId: true,
+        },
+        include: [{relation: 'diet'}],
+      },
+      {strictObjectIDCoercion: false},
+    );
+    user.allergies = await this.userRepository.allergies(user.id).find(
+      {
+        fields: {
+          allergyId: true,
+        },
+        include: [{relation: 'allergy'}],
+      },
+      {strictObjectIDCoercion: true},
+    );
+    user.intolerances = await this.userRepository.intolerances(user.id).find(
+      {
+        fields: {
+          intoleranceId: true,
+        },
+        include: [{relation: 'intolerance'}],
+      },
+      {strictObjectIDCoercion: true},
+    );
+    user.nonRegisteredFriends = await this.userRepository
+      .nonRegisteredFriends(user.id)
+      .find(
+        {
+          fields: {
+            surname: true,
+            userId: true,
+            diets: true,
+          },
+          include: [{relation: 'diets'}],
+        },
+        {strictObjectIDCoercion: true},
+      );
+    user.registeredFriends = await this.userRepository
+      .registeredFriends(user.id)
+      .find({fields: {friendUserId: true}}, {strictObjectIDCoercion: true});
+    const user2 = await this.userRepository.findById(user.id, {
+      include: [
+        {
+          relation: 'diets',
+        },
+      ],
+    });
+    console.log({user, user2});
+    return user2;
   }
 }
