@@ -1,9 +1,15 @@
 import {Entity, model, property, hasMany} from '@loopback/repository';
-import {UserAllergy} from './user-allergy.model';
-import {UserDiet} from './user-diet.model';
-import {UserIntolerance} from './user-intolerance.model';
-import {Friend} from './friend.model';
-import {RegisteredFriend} from './registered-friend.model';
+import {UserAllergy, UserAllergyWithRelations} from './user-allergy.model';
+import {UserDiet, UserDietWithRelations} from './user-diet.model';
+import {
+  UserIntolerance,
+  UserIntoleranceWithRelations,
+} from './user-intolerance.model';
+import {Friend, FriendWithRelations} from './friend.model';
+import {
+  RegisteredFriend,
+  RegisteredFriendWithRelations,
+} from './registered-friend.model';
 
 @model({
   settings: {
@@ -82,6 +88,11 @@ export class User extends Entity {
 
 export interface UserRelations {
   // describe navigational properties here
+  diets?: UserDietWithRelations[];
+  allergies?: UserAllergyWithRelations[];
+  intolerances?: UserIntoleranceWithRelations[];
+  nonRegisteredFriends?: FriendWithRelations[];
+  RegisteredFriend?: RegisteredFriendWithRelations[];
 }
 
 export type UserWithRelations = User & UserRelations;

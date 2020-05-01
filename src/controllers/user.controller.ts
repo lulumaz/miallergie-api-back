@@ -1,10 +1,20 @@
+import {RegisteredFriendWithRelations} from './../models/registered-friend.model';
+import {IntoleranceRepository} from './../repositories/intolerance.repository';
+import {AllergyRepository} from './../repositories/allergy.repository';
+import {DietRepository} from './../repositories/diet.repository';
+import {FriendWithRelations} from './../models/friend.model';
+import {FriendRepository} from './../repositories/friend.repository';
+import {UserIntoleranceRepository} from './../repositories/user-intolerance.repository';
+import {UserAllergyRepository} from './../repositories/user-allergy.repository';
+import {UserIntoleranceWithRelations} from './../models/user-intolerance.model';
+import {UserAllergyWithRelations} from './../models/user-allergy.model';
+import {UserDietRepository} from './../repositories/user-diet.repository';
 import {UserDietWithRelations} from './../models/user-diet.model';
-import {Diet} from './../models/diet.model';
 import {NotFound} from './../utils/error';
 import {UserWithRole} from './../services/user-service';
-import {Credentials} from './../models/user.model';
+import {Credentials, UserWithRelations} from './../models/user.model';
 import {PasswordHasher} from './../services/hash';
-import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {
   TokenService,
   UserService,
@@ -17,7 +27,6 @@ import {
   Filter,
   repository,
   Where,
-  Inclusion,
 } from '@loopback/repository';
 import {
   post,
@@ -112,6 +121,19 @@ class UserLogin extends Entity {
 export class UserController {
   constructor(
     @repository(UserRepository) private userRepository: UserRepository,
+    @repository(DietRepository) private dietRepository: DietRepository,
+    @repository(AllergyRepository)
+    private allergyRepository: AllergyRepository,
+    @repository(IntoleranceRepository)
+    private intoleranceRepository: IntoleranceRepository,
+    @repository(UserDietRepository)
+    private userDietRepository: UserDietRepository,
+    @repository(UserIntoleranceRepository)
+    private userIntoleranceRepository: UserIntoleranceRepository,
+    @repository(UserAllergyRepository)
+    private userAllergyRepository: UserAllergyRepository,
+    @repository(FriendRepository)
+    private friendRepository: FriendRepository,
     @repository(UserRoleRepository)
     private userRoleRepository: UserRoleRepository,
     @inject(RestBindings.Http.RESPONSE) protected response: Response,
@@ -490,33 +512,11 @@ export class UserController {
     },
   ): Promise<any> {
     const user = await this.userRepository.findById(currentUserProfile.id);
-    user.diets = await this.userRepository.diets(user.id).find(
-      {
-        fields: {
-          dietId: true,
-        },
-        include: [{relation: 'diet'}],
-      },
-      {strictObjectIDCoercion: false},
-    );
-    user.allergies = await this.userRepository.allergies(user.id).find(
-      {
-        fields: {
-          allergyId: true,
-        },
-        include: [{relation: 'allergy'}],
-      },
-      {strictObjectIDCoercion: true},
-    );
-    user.intolerances = await this.userRepository.intolerances(user.id).find(
-      {
-        fields: {
-          intoleranceId: true,
-        },
-        include: [{relation: 'intolerance'}],
-      },
-      {strictObjectIDCoercion: true},
-    );
+
+    await this.findDiets(user);
+    await this.findAllergies(user);
+    await this.findIntolerances(user);
+
     user.nonRegisteredFriends = await this.userRepository
       .nonRegisteredFriends(user.id)
       .find(
@@ -530,17 +530,129 @@ export class UserController {
         },
         {strictObjectIDCoercion: true},
       );
+    const nonRegisteredFriends: FriendWithRelations[] =
+      user.nonRegisteredFriends;
+
+    for (const nonRegisteredFriend of nonRegisteredFriends) {
+      await this.findDiets(nonRegisteredFriend);
+      await this.findAllergies(nonRegisteredFriend);
+      await this.findIntolerances(nonRegisteredFriend);
+    }
+
     user.registeredFriends = await this.userRepository
       .registeredFriends(user.id)
       .find({fields: {friendUserId: true}}, {strictObjectIDCoercion: true});
-    const user2 = await this.userRepository.findById(user.id, {
-      include: [
+    const registeredFriends: RegisteredFriendWithRelations[] =
+      user.registeredFriends;
+    for (const registeredFriend of registeredFriends) {
+      const friend: UserWithRelations = await this.userRepository.findById(
+        registeredFriend.friendUserId,
+      );
+      await this.findDiets(friend);
+      await this.findAllergies(friend);
+      await this.findIntolerances(friend);
+      registeredFriend.friendUser = friend;
+    }
+
+    return user;
+  }
+
+  private async findDiets(user: UserWithRelations | FriendWithRelations) {
+    if (user instanceof User) {
+      user.diets = await this.userRepository.diets(user.id).find(
         {
-          relation: 'diets',
+          fields: {
+            dietId: true,
+          },
+          include: [{relation: 'diet'}],
         },
-      ],
-    });
-    console.log({user, user2});
-    return user2;
+        {strictObjectIDCoercion: true},
+      );
+    } else {
+      user.diets = await this.friendRepository.diets(user.id).find(
+        {
+          fields: {
+            dietId: true,
+          },
+          include: [{relation: 'diet'}],
+        },
+        {strictObjectIDCoercion: true},
+      );
+    }
+
+    const diets: UserDietWithRelations[] = user.diets;
+    for (const diet of diets) {
+      console.log(diet.dietId);
+      diet.diet = await this.dietRepository.findById(diet.dietId);
+    }
+  }
+
+  private async findAllergies(user: UserWithRelations | FriendWithRelations) {
+    if (user instanceof User) {
+      user.allergies = await this.userRepository.allergies(user.id).find(
+        {
+          fields: {
+            allergyId: true,
+          },
+          include: [{relation: 'allergy'}],
+        },
+        {strictObjectIDCoercion: true},
+      );
+    } else {
+      user.allergies = await this.friendRepository.allergies(user.id).find(
+        {
+          fields: {
+            allergyId: true,
+          },
+          include: [{relation: 'allergy'}],
+        },
+        {strictObjectIDCoercion: true},
+      );
+    }
+    const allergies: UserAllergyWithRelations[] = user.allergies;
+    for (const allergy of allergies) {
+      console.log(allergy.allergyId);
+
+      allergy.allergy = await this.allergyRepository.findById(
+        allergy.allergyId,
+      );
+    }
+  }
+
+  private async findIntolerances(
+    user: UserWithRelations | FriendWithRelations,
+  ) {
+    if (user instanceof User) {
+      user.intolerances = await this.userRepository.intolerances(user.id).find(
+        {
+          fields: {
+            intoleranceId: true,
+          },
+          include: [{relation: 'intolerance'}],
+        },
+        {strictObjectIDCoercion: true},
+      );
+    } else {
+      user.intolerances = await this.friendRepository
+        .intolerances(user.id)
+        .find(
+          {
+            fields: {
+              intoleranceId: true,
+            },
+            include: [{relation: 'intolerance'}],
+          },
+          {strictObjectIDCoercion: true},
+        );
+    }
+
+    const intolerances: UserIntoleranceWithRelations[] = user.intolerances;
+    for (const intolerance of intolerances) {
+      console.log(intolerance.intoleranceId);
+
+      intolerance.intolerance = await this.intoleranceRepository.findById(
+        intolerance.intoleranceId,
+      );
+    }
   }
 }

@@ -1,5 +1,5 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {Intolerance} from './intolerance.model';
+import {Intolerance, IntoleranceWithRelations} from './intolerance.model';
 
 @model()
 export class FriendIntolerance extends Entity {
@@ -20,6 +20,8 @@ export class FriendIntolerance extends Entity {
 
 export interface FriendIntoleranceRelations {
   // describe navigational properties here
+  Intolerance?: IntoleranceWithRelations;
 }
 
-export type FriendIntoleranceWithRelations = FriendIntolerance & FriendIntoleranceRelations;
+export type FriendIntoleranceWithRelations = FriendIntolerance &
+  FriendIntoleranceRelations;

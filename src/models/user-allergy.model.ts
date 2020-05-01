@@ -1,5 +1,5 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {Allergy} from './allergy.model';
+import {Allergy, AllergyWithRelations} from './allergy.model';
 
 @model()
 export class UserAllergy extends Entity {
@@ -25,6 +25,7 @@ export class UserAllergy extends Entity {
 
 export interface UserAllergyRelations {
   // describe navigational properties here
+  allergy?: AllergyWithRelations;
 }
 
 export type UserAllergyWithRelations = UserAllergy & UserAllergyRelations;

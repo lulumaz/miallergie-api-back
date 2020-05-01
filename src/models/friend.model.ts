@@ -1,3 +1,9 @@
+import {UserAllergyWithRelations} from './user-allergy.model';
+import {
+  UserIntoleranceRelations,
+  UserIntoleranceWithRelations,
+} from './user-intolerance.model';
+import {UserDietWithRelations} from './user-diet.model';
 import {Entity, model, property, hasMany} from '@loopback/repository';
 import {FriendAllergy} from './friend-allergy.model';
 import {FriendDiet} from './friend-diet.model';
@@ -39,6 +45,9 @@ export class Friend extends Entity {
 
 export interface FriendRelations {
   // describe navigational properties here
+  diets?: UserDietWithRelations[];
+  allergies?: UserAllergyWithRelations[];
+  intolerances?: UserIntoleranceWithRelations[];
 }
 
 export type FriendWithRelations = Friend & FriendRelations;
