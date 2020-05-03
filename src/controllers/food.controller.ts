@@ -1,3 +1,9 @@
+import {FoodDietWithRelations} from './../models/food-diet.model';
+import {FoodAllergyWithRelations} from './../models/food-allergy.model';
+import {FoodIntoleranceWithRelations} from './../models/food-intolerance.model';
+import {IntoleranceRepository} from './../repositories/intolerance.repository';
+import {AllergyRepository} from './../repositories/allergy.repository';
+import {DietRepository} from './../repositories/diet.repository';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {authenticate} from '@loopback/authentication';
 import {
@@ -27,6 +33,12 @@ export class FoodController {
   constructor(
     @repository(FoodRepository)
     public foodRepository: FoodRepository,
+    @repository(DietRepository)
+    public dietRepository: DietRepository,
+    @repository(AllergyRepository)
+    public allergyRepository: AllergyRepository,
+    @repository(IntoleranceRepository)
+    public intoleranceRepository: IntoleranceRepository,
   ) {}
 
   @post('/foods', {
@@ -89,7 +101,65 @@ export class FoodController {
     @param.query.object('filter', getFilterSchemaFor(Food))
     filter?: Filter<Food>,
   ): Promise<Food[]> {
-    return this.foodRepository.find(filter);
+    const foods: Food[] = await this.foodRepository.find(filter);
+    if (filter?.include) {
+      for (const include of filter?.include) {
+        const relation = include.relation;
+        if (relation === 'foodIntolerances') {
+          for (const food of foods) {
+            try {
+              food.foodIntolerances = await this.foodRepository
+                .foodIntolerances(food.id)
+                .find({}, {strictObjectIDCoercion: true});
+              const foodIntolerances: FoodIntoleranceWithRelations[] =
+                food.foodIntolerances;
+              for (const foodIntolerance of foodIntolerances) {
+                foodIntolerance.intolerance = await this.intoleranceRepository.findById(
+                  foodIntolerance.intoleranceId,
+                );
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        } else if (relation === 'foodAllergies') {
+          for (const food of foods) {
+            try {
+              food.foodAllergies = await this.foodRepository
+                .foodAllergies(food.id)
+                .find({}, {strictObjectIDCoercion: true});
+              const foodAllergies: FoodAllergyWithRelations[] =
+                food.foodAllergies;
+              for (const foodAllergie of foodAllergies) {
+                foodAllergie.allergy = await this.allergyRepository.findById(
+                  foodAllergie.allergyId,
+                );
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        } else if (relation === 'foodDiets') {
+          try {
+            for (const food of foods) {
+              food.foodDiets = await this.foodRepository
+                .foodDiets(food.id)
+                .find({}, {strictObjectIDCoercion: true});
+              const foodDiets: FoodDietWithRelations[] = food.foodDiets;
+              for (const foodDiet of foodDiets) {
+                foodDiet.diet = await this.dietRepository.findById(
+                  foodDiet.dietId,
+                );
+              }
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    }
+
+    return foods;
   }
 
   @patch('/foods', {

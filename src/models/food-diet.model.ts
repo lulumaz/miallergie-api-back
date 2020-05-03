@@ -24,6 +24,7 @@ export class FoodDiet extends Entity {
 
 export interface FoodDietRelations {
   // describe navigational properties here
+  diet?: Diet;
 }
 
 export type FoodDietWithRelations = FoodDiet & FoodDietRelations;

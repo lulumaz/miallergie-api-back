@@ -24,6 +24,7 @@ export class FoodAllergy extends Entity {
 
 export interface FoodAllergyRelations {
   // describe navigational properties here
+  allergy?: Allergy;
 }
 
 export type FoodAllergyWithRelations = FoodAllergy & FoodAllergyRelations;

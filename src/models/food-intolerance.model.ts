@@ -29,6 +29,8 @@ export class FoodIntolerance extends Entity {
 
 export interface FoodIntoleranceRelations {
   // describe navigational properties here
+  intolerance?: Intolerance;
 }
 
-export type FoodIntoleranceWithRelations = FoodIntolerance & FoodIntoleranceRelations;
+export type FoodIntoleranceWithRelations = FoodIntolerance &
+  FoodIntoleranceRelations;
