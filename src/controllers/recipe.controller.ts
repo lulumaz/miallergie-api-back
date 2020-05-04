@@ -132,64 +132,17 @@ export class RecipeController {
     const recipes: Recipe[] = await this.recipeRepository.find(filter, {
       strictObjectIDCoercion: strictObjectIDCoercion,
     });
-    if (
-      filter?.include &&
-      filter.include[0] &&
-      filter.include[0].relation === 'image'
-    ) {
-      const res: Recipe[] = [];
-      for (const recipe of recipes) {
-        res.push(
-          await this.recipeRepository.findById(recipe.id, {
-            include: [{relation: 'image'}],
-          }),
-        );
+    let needImage = false;
+    if (filter?.include !== undefined) {
+      for (const include of filter.include) {
+        if (include.relation === 'image') {
+          needImage = true;
+          break;
+        }
       }
-      console.log({res});
-      return res;
-    } else {
-      return recipes;
     }
-  }
 
-  @post('/recipes/search', {
-    security: OPERATION_SECURITY_SPEC,
-    responses: {
-      '200': {
-        description: 'Array of Recipe model instances',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'array',
-              items: getModelSchemaRef(Recipe, {includeRelations: true}),
-            },
-          },
-        },
-      },
-    },
-  })
-  @authenticate('jwt')
-  async search(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getFilterSchemaFor(Recipe),
-        },
-      },
-    })
-    filter?: Filter<Recipe>,
-  ): Promise<Recipe[]> {
-    const strictObjectIDCoercion = true;
-    //hotfix
-    console.log({filter: filter});
-    const recipes: Recipe[] = await this.recipeRepository.find(filter, {
-      strictObjectIDCoercion: strictObjectIDCoercion,
-    });
-    if (
-      filter?.include &&
-      filter.include[0] &&
-      filter.include[0].relation === 'image'
-    ) {
+    if (needImage) {
       const res: Recipe[] = [];
       for (const recipe of recipes) {
         res.push(
