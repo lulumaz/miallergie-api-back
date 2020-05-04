@@ -46,7 +46,9 @@ export class RecipeRecipeIntoleranceController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<RecipeIntolerance>,
   ): Promise<RecipeIntolerance[]> {
-    return this.recipeRepository.recipeIntolerances(id).find(filter);
+    return this.recipeRepository
+      .recipeIntolerances(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/recipes/{id}/recipe-intolerances', {
@@ -104,7 +106,7 @@ export class RecipeRecipeIntoleranceController {
   ): Promise<Count> {
     return this.recipeRepository
       .recipeIntolerances(id)
-      .patch(recipeIntolerance, where);
+      .patch(recipeIntolerance, where, {strictObjectIDCoercion: true});
   }
 
   @del('/recipes/{id}/recipe-intolerances', {
@@ -121,6 +123,8 @@ export class RecipeRecipeIntoleranceController {
     @param.query.object('where', getWhereSchemaFor(RecipeIntolerance))
     where?: Where<RecipeIntolerance>,
   ): Promise<Count> {
-    return this.recipeRepository.recipeIntolerances(id).delete(where);
+    return this.recipeRepository
+      .recipeIntolerances(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }

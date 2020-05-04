@@ -43,7 +43,9 @@ export class RecipeRecipeAllergyController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<RecipeAllergy>,
   ): Promise<RecipeAllergy[]> {
-    return this.recipeRepository.recipeAllergies(id).find(filter);
+    return this.recipeRepository
+      .recipeAllergies(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/recipes/{id}/recipe-allergies', {
@@ -99,7 +101,7 @@ export class RecipeRecipeAllergyController {
   ): Promise<Count> {
     return this.recipeRepository
       .recipeAllergies(id)
-      .patch(recipeAllergy, where);
+      .patch(recipeAllergy, where, {strictObjectIDCoercion: true});
   }
 
   @del('/recipes/{id}/recipe-allergies', {
@@ -116,6 +118,8 @@ export class RecipeRecipeAllergyController {
     @param.query.object('where', getWhereSchemaFor(RecipeAllergy))
     where?: Where<RecipeAllergy>,
   ): Promise<Count> {
-    return this.recipeRepository.recipeAllergies(id).delete(where);
+    return this.recipeRepository
+      .recipeAllergies(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
