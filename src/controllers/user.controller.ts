@@ -45,7 +45,12 @@ import {
 } from '@loopback/rest';
 import {User} from '../models';
 import {UserRepository, UserRoleRepository} from '../repositories';
-import {validateRegister} from '../utils/validator';
+import {
+  validateRegister,
+  validateUsername,
+  validateEmail,
+  validatePassword,
+} from '../utils/validator';
 import {inject} from '@loopback/core';
 import {property, Entity, model} from '@loopback/repository';
 import {
@@ -364,7 +369,7 @@ export class UserController {
         newUser.username = user.username;
 
         //validating new user
-        const {error} = validateRegister(newUser);
+        const {error} = validateUsername({username: user.username});
         if (error) {
           throw new NotFound(530, error.details[0].message);
         }
@@ -380,7 +385,7 @@ export class UserController {
         newUser.email = user.email;
 
         //validating new user
-        const {error} = validateRegister(newUser);
+        const {error} = validateEmail({email: user.email});
         if (error) {
           throw new NotFound(530, error.details[0].message);
         }
@@ -408,7 +413,7 @@ export class UserController {
       if (test) {
         //validating new user
         newUser.password = user.newPassword;
-        const {error} = validateRegister(newUser);
+        const {error} = validatePassword({password: user.newPassword});
         if (error) {
           throw new NotFound(530, error.details[0].message);
         }
@@ -485,7 +490,7 @@ export class UserController {
       id: id as string,
       username,
       email,
-      roles: roles.map(r => r.roleId),
+      roles: roles.map((r) => r.roleId),
     };
   }
 
