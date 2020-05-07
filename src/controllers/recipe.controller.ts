@@ -1,3 +1,4 @@
+import {RecipeWithRelations} from './../models/recipe.model';
 import {authorize} from '@loopback/authorization';
 import {OPERATION_SECURITY_SPEC} from './../auth/security-spec';
 import {NotFound} from './../utils/error';
@@ -126,12 +127,13 @@ export class RecipeController {
     @param.query.object('filter', getFilterSchemaFor(Recipe))
     filter?: Filter<Recipe>,
   ): Promise<Recipe[]> {
-    const strictObjectIDCoercion = true;
     //hotfix
-    console.log({filter: filter});
-    const recipes: Recipe[] = await this.recipeRepository.find(filter, {
-      strictObjectIDCoercion: strictObjectIDCoercion,
-    });
+    const recipes: RecipeWithRelations[] = await this.recipeRepository.find(
+      filter,
+      {
+        strictObjectIDCoercion: true,
+      },
+    );
     let needImage = false;
     if (filter?.include !== undefined) {
       for (const include of filter.include) {
@@ -143,19 +145,11 @@ export class RecipeController {
     }
 
     if (needImage) {
-      const res: Recipe[] = [];
       for (const recipe of recipes) {
-        res.push(
-          await this.recipeRepository.findById(recipe.id, {
-            include: [{relation: 'image'}],
-          }),
-        );
+        recipe.image = await this.recipeRepository.image(recipe.id);
       }
-      console.log({res});
-      return res;
-    } else {
-      return recipes;
     }
+    return recipes;
   }
 
   @patch('/recipes', {

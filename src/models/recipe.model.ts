@@ -88,6 +88,7 @@ export class Recipe extends Entity {
 export interface RecipeRelations {
   // describe navigational properties here
   //link with ingredient thanks recipe-ingrdients
+  image?: File;
 }
 
 export type RecipeWithRelations = Recipe & RecipeRelations;

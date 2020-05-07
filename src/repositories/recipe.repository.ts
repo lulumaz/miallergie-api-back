@@ -3,20 +3,19 @@ import {
   repository,
   BelongsToAccessor,
   HasManyRepositoryFactory,
-  HasOneRepositoryFactory,
 } from '@loopback/repository';
 import {
   Recipe,
   RecipeRelations,
-  Diet,
   RecipeAllergy,
   RecipeIntolerance,
   Ingredient,
   File,
-  User, RecipeDiet} from '../models';
+  User,
+  RecipeDiet,
+} from '../models';
 import {MongoDsDataSource} from '../datasources';
 import {inject, Getter} from '@loopback/core';
-import {DietRepository} from './diet.repository';
 import {RecipeAllergyRepository} from './recipe-allergy.repository';
 import {RecipeIntoleranceRepository} from './recipe-intolerance.repository';
 import {IngredientRepository} from './ingredient.repository';
@@ -51,7 +50,10 @@ export class RecipeRepository extends DefaultCrudRepository<
     typeof Recipe.prototype.id
   >;
 
-  public readonly diets: HasManyRepositoryFactory<RecipeDiet, typeof Recipe.prototype.id>;
+  public readonly diets: HasManyRepositoryFactory<
+    RecipeDiet,
+    typeof Recipe.prototype.id
+  >;
 
   constructor(
     @inject('datasources.mongoDS') dataSource: MongoDsDataSource,
@@ -66,10 +68,15 @@ export class RecipeRepository extends DefaultCrudRepository<
     @repository.getter('FileRepository')
     protected fileRepositoryGetter: Getter<FileRepository>,
     @repository.getter('UserRepository')
-    protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('RecipeDietRepository') protected recipeDietRepositoryGetter: Getter<RecipeDietRepository>,
+    protected userRepositoryGetter: Getter<UserRepository>,
+    @repository.getter('RecipeDietRepository')
+    protected recipeDietRepositoryGetter: Getter<RecipeDietRepository>,
   ) {
     super(Recipe, dataSource);
-    this.diets = this.createHasManyRepositoryFactoryFor('diets', recipeDietRepositoryGetter,);
+    this.diets = this.createHasManyRepositoryFactoryFor(
+      'diets',
+      recipeDietRepositoryGetter,
+    );
     this.registerInclusionResolver('diets', this.diets.inclusionResolver);
     this.ownerUser = this.createBelongsToAccessorFor(
       'ownerUser',
