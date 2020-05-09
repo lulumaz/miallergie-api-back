@@ -13,6 +13,11 @@ export class FriendIntolerance extends Entity {
   @belongsTo(() => Intolerance)
   intoleranceId: string;
 
+  @property({
+    type: 'string',
+  })
+  friendId?: string;
+
   constructor(data?: Partial<FriendIntolerance>) {
     super(data);
   }

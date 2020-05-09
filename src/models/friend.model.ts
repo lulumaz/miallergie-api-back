@@ -1,3 +1,4 @@
+import {FriendIntolerance} from './friend-intolerance.model';
 import {UserAllergyWithRelations} from './user-allergy.model';
 import {
   UserIntoleranceRelations,
@@ -30,13 +31,13 @@ export class Friend extends Entity {
   @hasMany(() => FriendDiet)
   diets: FriendDiet[];
 
-  @hasMany(() => FoodIntolerance)
-  intolerances: FoodIntolerance[];
-
   @property({
     type: 'string',
   })
   userId?: string;
+
+  @hasMany(() => FriendIntolerance)
+  intolerances: FriendIntolerance[];
 
   constructor(data?: Partial<Friend>) {
     super(data);
