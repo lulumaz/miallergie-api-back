@@ -43,7 +43,9 @@ export class FriendFriendDietController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<FriendDiet>,
   ): Promise<FriendDiet[]> {
-    return this.friendRepository.diets(id).find(filter);
+    return this.friendRepository
+      .diets(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/friends/{id}/friend-diets', {
@@ -95,7 +97,9 @@ export class FriendFriendDietController {
     @param.query.object('where', getWhereSchemaFor(FriendDiet))
     where?: Where<FriendDiet>,
   ): Promise<Count> {
-    return this.friendRepository.diets(id).patch(friendDiet, where);
+    return this.friendRepository
+      .diets(id)
+      .patch(friendDiet, where, {strictObjectIDCoercion: true});
   }
 
   @del('/friends/{id}/friend-diets', {
@@ -112,6 +116,8 @@ export class FriendFriendDietController {
     @param.query.object('where', getWhereSchemaFor(FriendDiet))
     where?: Where<FriendDiet>,
   ): Promise<Count> {
-    return this.friendRepository.diets(id).delete(where);
+    return this.friendRepository
+      .diets(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }

@@ -15,16 +15,13 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Friend,
-  FriendIntolerance,
-} from '../models';
+import {Friend, FriendIntolerance} from '../models';
 import {FriendRepository} from '../repositories';
 
 export class FriendFriendIntoleranceController {
   constructor(
     @repository(FriendRepository) protected friendRepository: FriendRepository,
-  ) { }
+  ) {}
 
   @get('/friends/{id}/friend-intolerances', {
     responses: {
@@ -32,7 +29,10 @@ export class FriendFriendIntoleranceController {
         description: 'Array of Friend has many FriendIntolerance',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(FriendIntolerance)},
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(FriendIntolerance),
+            },
           },
         },
       },
@@ -42,14 +42,18 @@ export class FriendFriendIntoleranceController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<FriendIntolerance>,
   ): Promise<FriendIntolerance[]> {
-    return this.friendRepository.intolerances(id).find(filter);
+    return this.friendRepository
+      .intolerances(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/friends/{id}/friend-intolerances', {
     responses: {
       '200': {
         description: 'Friend model instance',
-        content: {'application/json': {schema: getModelSchemaRef(FriendIntolerance)}},
+        content: {
+          'application/json': {schema: getModelSchemaRef(FriendIntolerance)},
+        },
       },
     },
   })
@@ -61,11 +65,12 @@ export class FriendFriendIntoleranceController {
           schema: getModelSchemaRef(FriendIntolerance, {
             title: 'NewFriendIntoleranceInFriend',
             exclude: ['id'],
-            optional: ['friendId']
+            optional: ['friendId'],
           }),
         },
       },
-    }) friendIntolerance: Omit<FriendIntolerance, 'id'>,
+    })
+    friendIntolerance: Omit<FriendIntolerance, 'id'>,
   ): Promise<FriendIntolerance> {
     return this.friendRepository.intolerances(id).create(friendIntolerance);
   }
@@ -88,9 +93,12 @@ export class FriendFriendIntoleranceController {
       },
     })
     friendIntolerance: Partial<FriendIntolerance>,
-    @param.query.object('where', getWhereSchemaFor(FriendIntolerance)) where?: Where<FriendIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FriendIntolerance))
+    where?: Where<FriendIntolerance>,
   ): Promise<Count> {
-    return this.friendRepository.intolerances(id).patch(friendIntolerance, where);
+    return this.friendRepository
+      .intolerances(id)
+      .patch(friendIntolerance, where, {strictObjectIDCoercion: true});
   }
 
   @del('/friends/{id}/friend-intolerances', {
@@ -103,8 +111,11 @@ export class FriendFriendIntoleranceController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(FriendIntolerance)) where?: Where<FriendIntolerance>,
+    @param.query.object('where', getWhereSchemaFor(FriendIntolerance))
+    where?: Where<FriendIntolerance>,
   ): Promise<Count> {
-    return this.friendRepository.intolerances(id).delete(where);
+    return this.friendRepository
+      .intolerances(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }

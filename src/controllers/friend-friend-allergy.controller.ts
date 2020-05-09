@@ -43,7 +43,9 @@ export class FriendFriendAllergyController {
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<FriendAllergy>,
   ): Promise<FriendAllergy[]> {
-    return this.friendRepository.allergies(id).find(filter);
+    return this.friendRepository
+      .allergies(id)
+      .find(filter, {strictObjectIDCoercion: true});
   }
 
   @post('/friends/{id}/friend-allergies', {
@@ -97,7 +99,9 @@ export class FriendFriendAllergyController {
     @param.query.object('where', getWhereSchemaFor(FriendAllergy))
     where?: Where<FriendAllergy>,
   ): Promise<Count> {
-    return this.friendRepository.allergies(id).patch(friendAllergy, where);
+    return this.friendRepository
+      .allergies(id)
+      .patch(friendAllergy, where, {strictObjectIDCoercion: true});
   }
 
   @del('/friends/{id}/friend-allergies', {
@@ -114,6 +118,8 @@ export class FriendFriendAllergyController {
     @param.query.object('where', getWhereSchemaFor(FriendAllergy))
     where?: Where<FriendAllergy>,
   ): Promise<Count> {
-    return this.friendRepository.allergies(id).delete(where);
+    return this.friendRepository
+      .allergies(id)
+      .delete(where, {strictObjectIDCoercion: true});
   }
 }
