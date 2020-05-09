@@ -529,6 +529,7 @@ export class UserController {
           fields: {
             surname: true,
             userId: true,
+            id: true,
             diets: true,
           },
           include: [{relation: 'diets'}],
