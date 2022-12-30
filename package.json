@@ -75,7 +75,7 @@
     "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
-    "@loopback/build": "^5.3.0",
+    "@loopback/build": "^5.4.3",
     "@loopback/eslint-config": "^6.0.5",
     "@loopback/testlab": "^3.1.2",
     "@types/node": "^10.17.21",
